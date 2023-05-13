@@ -20,16 +20,19 @@ timezone: Europe/Paris
 
 title: Camille Gilbert # the main title
 
-tagline: Personnal website # it will display as the sub-title
+tagline: A text-focused Jekyll theme # it will display as the sub-title
 
 description: >- # used by seo meta and the atom feed
-  Personnal website
+  A minimal, responsive and feature-rich Jekyll theme for technical writing.
 
 # fill in the protocol & hostname for your site, e.g., 'https://username.github.io'
 url: "https://camillegit.github.io"
 
 github:
   username: camillegit # change to your github username
+
+twitter:
+  username: twitter_username # change to your twitter username
 
 social:
   # Change to your full name.
