@@ -11,3 +11,4 @@ There was once a childhood in the Champagne countryside between ears of ripe whe
 Later I graduated from EPFL with an M.Sc. in robotics and biomedical engineering, which more concretely implies interests in electronics, computer science, as well as other engineering sciences, let's say polytechnic rather than generalist. More interestingly, these disciplines form the basis of tools for representing the world and human systems. With this background, I would have liked to have immersed myself in a community interested in the human sciences, such as the London School of Economics, but material and time constraints have so far only allowed me to spend a summer there.
 
 
+
