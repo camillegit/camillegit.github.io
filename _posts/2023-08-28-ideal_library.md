@@ -2,7 +2,7 @@
 title: "Virgile"
 author: camille              # for single entry
 date: 2023-08-28 12:00:00 +0100
-categories: [note, readings]
+categories: [readings, poesie]
 tags: [virgile]   
 ---
 
