@@ -1,9 +1,9 @@
 ---
-title: "Virgile"
+title: "Fragments"
 author: camille              # for single entry
 date: 2023-08-28 12:00:00 +0100
 categories: [readings, poesie]
-tags: [virgile]   
+tags: [fragments]   
 ---
 
 
