@@ -23,3 +23,5 @@ On peut supposer que le langage fait parfois usage d'un formalisme inconnu du r�
 Les développement de Shannon mènent tout droit, à travers les Ngramme vers les récents développements du Natural Language Processing, les symboles étant des tokens et le Ngramme étant la taille du contexte, avec des subtilités supplémentaires, s'appuyant uniquement sur l'aspect probabiliste du langage.
 
 Pour poursuivre ces réflexions, il serait intéressant de creuser les aspects de représentation sémantique peut-être étudiés en neurosciences ou en apprentissage automatique. On peut également continuer à penser le langage comme espace mathématique propre à chaque individu, ainsi que son articulation avec cette représentation sémantique. Comment un large espace linguistique permet alors de développer un espace sémantique, domaine peut-être abordée dans les théories de l'apprentissage ou du langage.
+
+Wittgenstein représentation sémantique du langage incomplète, langage déscriptif, est-ce que la meta-physique échappe au langage, le contexte comme représentation sémantique en NLP.
