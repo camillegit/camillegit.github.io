@@ -1,12 +1,12 @@
 ---
 title: "Comment trouver la panoplie optimale pour un jeu en ligne ?"
 author: camille              # for single entry
-date: 2023-11-29 12:00:00 +0100
+date: 2024-11-29 12:00:00 +0100
 categories: [maths, jeux, optimisation, programmation]
 tags: [maths, jeux, optimisation, programmation]   
 ---
 
-### Comment trouver la panoplie optimale pour un jeu en ligne ? 
+# Comment trouver la panoplie optimale pour un jeu en ligne ? 
 
 Comme beaucoup de jeunes adultes de ma génération, j'ai été marqué voilà une quinzaine d'année par un jeu en ligne massivement multijoueur. Après plusieurs années d’éloignement, j’ai récemment appris la sortie d'une refonte du jeu, Dofus 3.0, une version modernisée du jeu. Intrigué, je n’ai pas pu résister à l’envie de m’y replonger. Mais voilà, le jeu a énormément évolué : de nouveaux équipements, de nouvelles panoplies, des bonus inédits, des mécaniques qui me sont complètement inconnues. Plutôt que de me laisser submerger, j’ai décidé de transformer cette redécouverte en un petit projet ludique qui me permette de pratiquer les mathématiques et la programmation. L'idée est d'écrire un programme d’optimisation linéaire pour identifier les meilleurs équipements possibles selon des objectifs ciblés. Ce projet, en plus de me replonger dans l’univers de Dofus, me permettrait d’apprendre à mieux maîtriser les outils mathématiques que j’ai toujours voulu explorer.
 
@@ -16,7 +16,7 @@ Pour les noobies (les néophytes sur le sujet), l’optimisation linéaire, cons
 
 
 ## La formulation du problème
-# Les variables de décision
+### Les variables de décision
 
 Dans ce problème, les **variables de décision** sont au cœur du modèle. Chaque variable représente un choix concret à effectuer. Par exemple :
 - \( b_i \) : une variable binaire qui vaut 1 si un équipement \( i \) est sélectionné, et 0 sinon.
@@ -24,7 +24,7 @@ Dans ce problème, les **variables de décision** sont au cœur du modèle. Chaq
 
 Ces variables déterminent non seulement quels équipements sont choisis, mais aussi quels bonus sont activés en fonction des synergies entre équipements. Ces variables étant binaires, leur multiplication avec la somme pondérée de leurs caractéristiques propres nous donnera la performance combinée des équipements choisis.
 
-# Les contraintes
+### Les contraintes
 
 Pour que le modèle reste cohérent avec les règles de Dofus, plusieurs **contraintes** s’appliquent aux variables :
 
@@ -48,7 +48,7 @@ Pour que le modèle reste cohérent avec les règles de Dofus, plusieurs **contr
    \sum_i b_i \cdot \text{caractéristique}_i \leq \text{seuil}
    \]
 
-# La fonction objectif
+### La fonction objectif
  
    La fonction objectif combine les contributions des équipements \( b_i \) et des bonus \( y_{jk} \) pour maximiser les caractéristiques (\(\alpha_{i}\) ou \(\beta_{j,k}\)
 ) importantes comme la force, l’intelligence ou la vitalité, sous la forme :  
@@ -57,3 +57,31 @@ Pour que le modèle reste cohérent avec les règles de Dofus, plusieurs **contr
    \]
 
   Nous faisons un somme pondérée des caractéristiques d'intérêt pour définir leur importance relative dans l'objectif (selon ce qui est le plus pertinent pour les mécaniques de jeu).
+
+## L'implémentation
+
+### Collecte des données
+
+Pour résoudre ce problème d'optimisation des équipements, nous avons d'abord dû récolter les données nécessaires à la modélisation du problème. La première étape de notre quête a été de programmer un **scrapper** avec **Beautiful Soup** en Python, pour extraire automatiquement des informations de pages web. L'objectif était de collecter les données des équipements depuis l'encyclopédie du jeu disponible sur le site officiel de **Dofus**. À l'époque, cette encyclopédie regorgeait d'informations détaillées sur les équipements, les bonus de panoplie et les caractéristiques associées. 
+
+Cependant, au détour de la lecture d'une note de mise à jour, une mauvaise nouvelle est tombée : l'encyclopédie du site de Dofus allait être fermée à l'occasion de la refonte du jeu. Heureusement, de rares alternatives existent, comme l'API de DofusDB. Cette API permet de collecter les informations détaillées sur les équipements et les mécanismes du jeu.
+
+### Traitement et nettoyage des Données
+
+Une fois les données collectées, une étape cruciale de tout projet a été le **nettoyage** et le **traitement** des informations. Les traitements effectuées incluent notamment :
+
+- **Éliminer les équipements non obtenables en jeu** : Nous avons filtré les objets qui ne pouvaient être obtenus dans le jeu, comme ceux obtenus uniquement par des évenements ou autres.
+  
+- **Recalculer les bonus de panoplie** : Les panoplies offrent des bonus croissants en fonction du nombre d'objets sélectionnés. Il faut donc développer une méthode **incrémentale** pour calculer les bonus activés à mesure que de nouveaux équipements étaient ajoutés à la sélection.
+
+- **Uniformiser le format des données** : Enfin il faut faire en sorte que les données soient présentes dans des formats qui seront utilisables plus facilement pour l'implémentation du problème en Python.
+
+### Programmation du Problème d'Optimisation
+
+Une fois les données prêtes, il a fallu aborder la partie **programmation linéaire** du projet. Heureusement, grâce à la bibliothèque **PuLP** en Python, l’implémentation du modèle d'optimisation a été relativement simple. PuLP permet de formuler simplement et de résoudre des problèmes d'optimisation linéaire, en utilisant les **Solvers** populaires (les algorithmes de résolution des problèmes à proprement parler). L'implémentation se fait en suivant les étapes du problèmes décrites précédemment.
+
+## Conclusion et Publication
+
+Une fois le modèle d'optimisation développé, il ne restait plus qu'à le tester et à l'affiner. Les résultats sont satisfaisants et permettent d'obtenir des ensembles d'équipements optimisés selon divers critères. Le programme est disponible sur mon **GitHub**, n'hésitez pas à partager vos propositions d'amélioration.
+
+
