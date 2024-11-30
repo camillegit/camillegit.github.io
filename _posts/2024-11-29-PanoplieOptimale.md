@@ -19,7 +19,7 @@ Pour les noobies (les néophytes sur le sujet), l’optimisation linéaire, cons
 
 Dans ce problème, les **variables de décision** sont au cœur du modèle. Chaque variable représente un choix concret à effectuer. Par exemple :
 - $$ b_i $$ : une variable binaire qui vaut 1 si un équipement $$ i $$ est sélectionné, et 0 sinon.
-- $$ y_jk $$ : une variable représentant l’activation d’un bonus de panoplie (c'est à dire une combinaison d'équipements) spécifique de l'ensemble $$ j $$, disons la panoplie du Bouftou, pour $$ k $$ objets équipés.
+- $$ y_{jk} $$ : une variable représentant l’activation d’un bonus de panoplie (c'est à dire une combinaison d'équipements) spécifique de l'ensemble $$ j $$, disons la panoplie du Bouftou, pour $$ k $$ objets équipés.
 
 Ces variables déterminent non seulement quels équipements sont choisis, mais aussi quels bonus sont activés en fonction des synergies entre équipements. Ces variables étant binaires, leur multiplication avec la somme pondérée de leurs caractéristiques propres nous donnera la performance combinée des équipements choisis.
 
