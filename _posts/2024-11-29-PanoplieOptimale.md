@@ -43,7 +43,7 @@ Pour que le modèle reste cohérent avec les règles de Dofus, plusieurs **contr
 3. **Caractéristiques minimales**  
    Certaines contraintes peuvent donner un seuil pour une caractéristique $$\alpha_{i}$$ donnée, appliquée à tous les équipements sélectionnés, par exemple :  
    
-	$$ \sum_i b_i \cdot \alpha_i \leq \text{seuil} $$
+	$$ \sum_i b_i \cdot \alpha_i \heq \text{seuil} $$
 
 ### La fonction objectif
  
