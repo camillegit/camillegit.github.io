@@ -63,7 +63,7 @@ Pour résoudre ce problème d'optimisation des équipements, nous avons d'abord 
 
 Cependant, au détour de la lecture d'une note de mise à jour, une mauvaise nouvelle est tombée : l'encyclopédie du site de Dofus allait être fermée à l'occasion de la refonte du jeu. Heureusement, de rares alternatives existent, comme l'API de DofusDB. Cette API permet de collecter les informations détaillées sur les équipements et les mécanismes du jeu.
 
-### Traitement et nettoyage des Données
+### Traitement et nettoyage des données
 
 Une fois les données collectées, une étape cruciale de tout projet a été le **nettoyage** et le **traitement** des informations. Les traitements effectuées incluent notamment :
 
