@@ -37,7 +37,7 @@ Pour que le modèle reste cohérent avec les règles de Dofus, plusieurs **contr
 
    $$ y_{jk} \leq \frac{\sum_{i \in j} b_i}{k} $$
   
-   où $$ k $$ est le nombre minimal d’équipements nécessaires pour activer le bonus $$ y_jk $$ spécifique à la panoplie $$ j $$. Les bonus seront cumulatifs (le bonus pour avoir équipé 3 équipements d'additionnera au bonus pour avoir équipé 2 équipements de la même panoplie), nous devrons nous assurer que notre base de donnée soit construite ainsi.
+   où $$ k $$ est le nombre minimal d’équipements nécessaires pour activer le bonus $$ y_{jk} $$ spécifique à la panoplie $$ j $$. Les bonus seront cumulatifs (le bonus pour avoir équipé 3 équipements d'additionnera au bonus pour avoir équipé 2 équipements de la même panoplie), nous devrons nous assurer que notre base de donnée soit construite ainsi.
 
 
 3. **Caractéristiques minimales**  
