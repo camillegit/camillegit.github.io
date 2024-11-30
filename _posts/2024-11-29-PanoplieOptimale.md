@@ -77,7 +77,7 @@ Une fois les données collectées, une étape cruciale de tout projet a été le
 
 Une fois les données prêtes, il a fallu aborder la partie **programmation linéaire** du projet. Heureusement, grâce à la bibliothèque **PuLP** en Python, l’implémentation du modèle d'optimisation a été relativement simple. PuLP permet de formuler simplement et de résoudre des problèmes d'optimisation linéaire, en utilisant les **Solvers** populaires (les algorithmes de résolution des problèmes à proprement parler). L'implémentation se fait en suivant les étapes du problèmes décrites précédemment.
 
-## Conclusion et Publication
+## Conclusion
 
 Une fois le modèle d'optimisation développé, il ne restait plus qu'à le tester et à l'affiner. Les résultats sont satisfaisants et permettent d'obtenir des ensembles d'équipements optimisés selon divers critères. Le programme est disponible sur mon **GitHub**, n'hésitez pas à partager vos propositions d'amélioration.
 
