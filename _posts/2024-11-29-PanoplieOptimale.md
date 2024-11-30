@@ -41,15 +41,17 @@ Pour que le modèle reste cohérent avec les règles de Dofus, plusieurs **contr
 
 
 3. **Caractéristiques minimales**  
-   Certaines contraintes peuvent donner un seuil pour une caractéristique pour les équipements sélectionnés, par exemple :  
+   Certaines contraintes peuvent donner un seuil pour une caractéristique (\alpha_i) donnée, appliquée à tous les équipements sélectionnés, par exemple :  
    
-	$$ \sum_i b_i \cdot \text{caractéristique}_i \leq \text{seuil} $$
+	$$ \sum_i b_i \cdot \alpha_i \leq \text{seuil} $$
 
 ### La fonction objectif
  
-   La fonction objectif combine les contributions des équipements $$ b_i $$ et des bonus $$ y_{jk} $$ pour maximiser les caractéristiques $$alpha_{i}$$ ou $$beta_{j,k}$$ importantes comme la force, l’intelligence ou la vitalité, sous la forme :  
+   La fonction objectif combine les contributions des équipements $$ b_i $$ et des bonus $$ y_{jk} $$ pour maximiser les caractéristiques $$\alpha_{i}$$ ou $$\beta_{j,k}$$ importantes comme la force, l’intelligence ou la vitalité, sous la forme :  
    
-	$$ \text{Maximiser } \sum_i \left(b_i \cdot \alpha_{i}\right) + \sum_{j,k} \left(y_{jk} \cdot \beta_{j,k}\right) $$
+$$
+\text{Maximiser } \sum_i \left(b_i \cdot \alpha_{i}\right) + \sum_{j,k} \left(y_{jk} \cdot \beta_{j,k}\right)
+$$
 
   Nous faisons un somme pondérée des caractéristiques d'intérêt pour définir leur importance relative dans l'objectif (selon ce qui est le plus pertinent pour les mécaniques de jeu).
 
