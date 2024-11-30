@@ -41,7 +41,7 @@ Pour que le modèle reste cohérent avec les règles de Dofus, plusieurs **contr
 
 
 3. **Caractéristiques minimales**  
-   Certaines contraintes peuvent donner un seuil pour une caractéristique (\alpha_i) donnée, appliquée à tous les équipements sélectionnés, par exemple :  
+   Certaines contraintes peuvent donner un seuil pour une caractéristique $$\alpha_{i}$$ donnée, appliquée à tous les équipements sélectionnés, par exemple :  
    
 	$$ \sum_i b_i \cdot \alpha_i \leq \text{seuil} $$
 
@@ -73,7 +73,7 @@ Une fois les données collectées, une étape cruciale de tout projet a été le
 
 - **Uniformiser le format des données** : Enfin il faut faire en sorte que les données soient présentes dans des formats qui seront utilisables plus facilement pour l'implémentation du problème en Python.
 
-### Programmation du Problème d'Optimisation
+### Programmation du problème
 
 Une fois les données prêtes, il a fallu aborder la partie **programmation linéaire** du projet. Heureusement, grâce à la bibliothèque **PuLP** en Python, l’implémentation du modèle d'optimisation a été relativement simple. PuLP permet de formuler simplement et de résoudre des problèmes d'optimisation linéaire, en utilisant les **Solvers** populaires (les algorithmes de résolution des problèmes à proprement parler). L'implémentation se fait en suivant les étapes du problèmes décrites précédemment.
 
