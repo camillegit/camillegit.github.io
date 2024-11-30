@@ -7,6 +7,10 @@ tags: [maths, jeux, optimisation, programmation]
 math: true
 ---
 
+$$
+\alpha_{i} \quad \text{et} \quad \beta_{j,k}
+$$
+
 Comme beaucoup de jeunes adultes de ma génération, j'ai été marqué voilà une quinzaine d'année par un jeu en ligne massivement multijoueur. Après plusieurs années d’éloignement, j’ai récemment appris la sortie d'une refonte du jeu, Dofus 3.0, une version modernisée du jeu. Intrigué, je n’ai pas pu résister à l’envie de m’y replonger. Mais voilà, le jeu a énormément évolué : de nouveaux équipements, de nouvelles panoplies, des bonus inédits, des mécaniques qui me sont complètement inconnues. Plutôt que de me laisser submerger, j’ai décidé de transformer cette redécouverte en un petit projet ludique qui me permette de pratiquer les mathématiques et la programmation. L'idée est d'écrire un programme d’optimisation linéaire pour identifier les meilleurs équipements possibles selon des objectifs ciblés. Ce projet, en plus de me replonger dans l’univers de Dofus, me permettrait d’apprendre à mieux maîtriser les outils mathématiques que j’ai toujours voulu explorer.
 
 ## L'optimisation linéaire
