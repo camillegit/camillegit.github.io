@@ -84,7 +84,7 @@ Une fois les données collectées, une étape cruciale de tout projet est le net
 
 ### Programmation du problème
 
-Une fois les données prêtes, il a fallu aborder la partie programmation linéaire du projet. Heureusement, grâce à la bibliothèque PuLP en Python, l’implémentation du modèle d'optimisation a été relativement simple. PuLP permet de formuler simplement et de résoudre des problèmes d'optimisation linéaire, en utilisant les solvers populaires (les algorithmes de résolution des problèmes à proprement parler, qui se basent sur des algorithmes de résolutions bien connus comme la méthode simplexe ou le point intérieur). L'implémentation se fait en suivant les étapes du problèmes décrites précédemment.
+Une fois les données prêtes, il a fallu aborder la partie programmation linéaire du projet. Heureusement, grâce à la bibliothèque PuLP en Python, l’implémentation du modèle d'optimisation a été relativement simple. PuLP permet de formuler simplement et de résoudre des problèmes d'optimisation linéaire, en utilisant les solvers populaires (les algorithmes de résolution des problèmes à proprement parler, qui se basent sur des algorithmes de résolutions bien connus comme la méthode simplexe ou le point intérieur). L'implémentation se fait en suivant les étapes du problème décrites précédemment.
 
 ## Conclusion et perspectives
 
