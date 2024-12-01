@@ -27,14 +27,14 @@ Ces variables déterminent non seulement quels équipements sont choisis, mais a
 
 Pour que le modèle reste cohérent avec les règles de Dofus, plusieurs **contraintes** s’appliquent aux variables :
 
-1. **Limite du nombre d’emplacements**  
+- **Limite du nombre d’emplacements**  
    Chaque catégorie d’équipement (chapeau, anneau, arme, etc.) a un emplacement dédié, et ne peut donc être équipé qu'en quantité limitée : on ne peut pas équiper deux chapeaux, par exemple ou plus de deux anneaux. Cela impose une contrainte comme : 
  
 $$
  \vphantom{\sum}
  \sum_{i \in \text{chapeaux}} b_i \leq 1 $$
 
-2. **Activation des bonus de panoplies**  
+- **Activation des bonus de panoplies**  
    Un bonus de panoplie $$ y_{jk} $$ ne peut être activé que si suffisamment d’éléments de cette panoplie sont sélectionnés :  
 $$
   \vphantom{\sum}
@@ -43,7 +43,7 @@ y_{jk} \leq \frac{\sum_{i \in j} b_i}{k} $$
    où $$ k $$ est le nombre minimal d’équipements nécessaires pour activer le bonus $$ y_{jk} $$ spécifique à la panoplie $$ j $$. Les bonus seront cumulatifs (le bonus pour avoir équipé 3 équipements d'additionnera au bonus pour avoir équipé 2 équipements de la même panoplie), nous devrons nous assurer que notre base de donnée soit construite ainsi.
 
 
-3. **Caractéristiques minimales**  
+- **Caractéristiques minimales**  
    Certaines contraintes peuvent donner un seuil pour une caractéristique $$\alpha_{i}$$ donnée, appliquée à tous les équipements sélectionnés, par exemple :  
    
 $$
@@ -58,7 +58,7 @@ $$
 $$
 
   \vphantom{\sum}
-\text{Maximiser } \sum_i \left(b_i \cdot \alpha_{i}\right) + \sum_{j,k} \left(y_{jk} \cdot \beta_{j,k}\right)
+\text{Maximiser }_{b_i,y_{jk}} \sum_i \left(b_i \cdot \alpha_{i}\right) + \sum_{j,k} \left(y_{jk} \cdot \beta_{j,k}\right)
 $$
 
   Nous faisons un somme pondérée des caractéristiques d'intérêt pour définir leur importance relative dans l'objectif (selon ce qui est le plus pertinent pour les mécaniques de jeu).
