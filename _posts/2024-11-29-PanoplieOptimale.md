@@ -85,11 +85,11 @@ Si la mise en place de cet algorithme pour ces fins parait futile, l'optimisatio
 
 
 $$
-\text{Maximiser}_\mathbf{x} \mathbf{\mu}^\top \mathbf{x} - \gamma \mathbf{x}^\top \Sigma \mathbf{x}
-
+\text{Maximiser}_\mathbf{x} \, \mathbf{\mu}^\top \mathbf{x} - \gamma \mathbf{x}^\top \Sigma \mathbf{x}
+\\[10pt]
 e^\top \mathbf{x} = 1
 $$
 
-Où \mathbf{x} serait un vecteur représentant l'allocation d'actifs normalisée par le total des actifs, \mathbf{\mu} serait le rendement moyen passé de ces actifs (hypothèse pour le rendement futur), \gamma un facteur de pondération entre le risque et le retour, \Sigma la matrice de covariance des actifs (hypothèse pour le risque futur). On retrouve notre contrainte pour la normalisation de la distribution, de manière analogue à la contrainte sur les types d'équipements plus haut avec e^\top le vecteur identité. 
+Où $$\mathbf{x}$$ serait un vecteur représentant l'allocation d'actifs normalisée par le total des actifs, $$\mathbf{\mu}$$ serait le rendement moyen passé de ces actifs (hypothèse pour le rendement futur), $$\gamma$$ un facteur de pondération entre le risque et le retour, $$\Sigma$$ la matrice de covariance des actifs (hypothèse pour le risque futur). On retrouve notre contrainte pour la normalisation de la distribution, de manière analogue à la contrainte sur les types d'équipements plus haut avec $$e^\top$$ le vecteur identité. 
 
 Ce modèle, bien qu'intéressant sur le plan théorique est très simplificateur en pratique. Les hypothèses que le rendement ou le risque futurs sont similaires au passé sont sujettes à caution, tout comme les présupposés sur les distributions normales utilisées.
