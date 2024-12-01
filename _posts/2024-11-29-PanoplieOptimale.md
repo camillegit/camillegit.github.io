@@ -85,6 +85,9 @@ Si la mise en place de cet algorithme pour ces fins parait futile, l'optimisatio
 
 
 $$
+
+$$
+$$
 \text{Maximiser}_\mathbf{x} \: \mathbf{\mu}^\top \mathbf{x} - \gamma \mathbf{x}^\top \Sigma \mathbf{x}
 $$
 
