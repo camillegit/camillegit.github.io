@@ -83,12 +83,15 @@ Une fois le modèle d'optimisation développé, il ne reste plus qu'à le tester
 
 Si la mise en place de cet algorithme pour ces fins parait futile, l'optimisation linéaire, quadratique, stochastique, dynamique trouve de nombreuses applications en robotique, ou en gestion. J'en veux pour exemple le **modèle de Markowitz** qui s'énonce comme suit : 
 
+$$
+
+  \vphantom{\sum}
 
 $$
-\begin{equation}
+$$
+
   \text{Maximiser}_\mathbf{x} \: \mathbf{\mu}^\top \mathbf{x} - \gamma \mathbf{x}^\top \Sigma \mathbf{x}
-  \label{eq:series}
-\end{equation}
+
 $$
 
 $$
