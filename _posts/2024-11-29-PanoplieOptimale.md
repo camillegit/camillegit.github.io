@@ -2,7 +2,7 @@
 title: "Comment trouver la panoplie optimale pour un jeu en ligne ?"
 author: camille              # for single entry
 date: 2024-11-29 12:00:00 +0100
-categories: [maths, jeux, optimisation, programmation]
+categories: [expérience]
 tags: [maths, jeux, optimisation, programmation]   
 math: true
 ---
