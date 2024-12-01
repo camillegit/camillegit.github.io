@@ -31,14 +31,12 @@ Pour que le modèle reste cohérent avec les règles de Dofus, plusieurs **contr
    Chaque catégorie d’équipement (chapeau, anneau, arme, etc.) a un emplacement dédié, et ne peut donc être équipé qu'en quantité limitée : on ne peut pas équiper deux chapeaux, par exemple ou plus de deux anneaux. Cela impose une contrainte comme : 
  
 $$
-
  \vphantom{\sum}
  \sum_{i \in \text{chapeaux}} b_i \leq 1 $$
 
 2. **Activation des bonus de panoplies**  
    Un bonus de panoplie $$ y_{jk} $$ ne peut être activé que si suffisamment d’éléments de cette panoplie sont sélectionnés :  
 $$
-
   \vphantom{\sum}
 y_{jk} \leq \frac{\sum_{i \in j} b_i}{k} $$
   
