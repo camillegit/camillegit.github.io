@@ -25,7 +25,7 @@ Wiittgenstein reste sybillin pour la plupart de ses exégète. Je n'ai donc aucu
 
 ### 
 
-Comment ne pas sombrer dans le pyrrhonisme, doute aristoteliecine
+Comment ne pas sombrer dans le pyrrhonisme, doute aristoteliecine, mesure aristotelicienne
 
 
 
