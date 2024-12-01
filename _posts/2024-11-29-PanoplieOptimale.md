@@ -36,9 +36,10 @@ $$
 
 - **Activation des bonus de panoplies**  
    Un bonus de panoplie $$ y_{jk} $$ ne peut être activé que si suffisamment d’éléments de cette panoplie sont sélectionnés :  
+
 $$
   \vphantom{\sum}
-y_{jk} \leq \frac{\sum_{i \in j} b_i}{k} $$
+   y_{jk} \leq \frac{\sum_{i \in j} b_i}{k} $$
   
    où $$ k $$ est le nombre minimal d’équipements nécessaires pour activer le bonus $$ y_{jk} $$ spécifique à la panoplie $$ j $$. Les bonus seront cumulatifs (le bonus pour avoir équipé 3 équipements d'additionnera au bonus pour avoir équipé 2 équipements de la même panoplie), nous devrons nous assurer que notre base de donnée soit construite ainsi.
 
