@@ -30,12 +30,17 @@ Pour que le modèle reste cohérent avec les règles de Dofus, plusieurs **contr
 1. **Limite du nombre d’emplacements**  
    Chaque catégorie d’équipement (chapeau, anneau, arme, etc.) a un emplacement dédié, et ne peut donc être équipé qu'en quantité limitée : on ne peut pas équiper deux chapeaux, par exemple ou plus de deux anneaux. Cela impose une contrainte comme : 
  
-	$$ \sum_{i \in \text{chapeaux}} b_i \leq 1 $$
+$$
+
+ \vphantom{\sum}
+ \sum_{i \in \text{chapeaux}} b_i \leq 1 $$
 
 2. **Activation des bonus de panoplies**  
    Un bonus de panoplie $$ y_{jk} $$ ne peut être activé que si suffisamment d’éléments de cette panoplie sont sélectionnés :  
+$$
 
-   $$ y_{jk} \leq \frac{\sum_{i \in j} b_i}{k} $$
+  \vphantom{\sum}
+y_{jk} \leq \frac{\sum_{i \in j} b_i}{k} $$
   
    où $$ k $$ est le nombre minimal d’équipements nécessaires pour activer le bonus $$ y_{jk} $$ spécifique à la panoplie $$ j $$. Les bonus seront cumulatifs (le bonus pour avoir équipé 3 équipements d'additionnera au bonus pour avoir équipé 2 équipements de la même panoplie), nous devrons nous assurer que notre base de donnée soit construite ainsi.
 
@@ -43,13 +48,19 @@ Pour que le modèle reste cohérent avec les règles de Dofus, plusieurs **contr
 3. **Caractéristiques minimales**  
    Certaines contraintes peuvent donner un seuil pour une caractéristique $$\alpha_{i}$$ donnée, appliquée à tous les équipements sélectionnés, par exemple :  
    
-	$$  \text{seuil} \leq \sum_i b_i \cdot \alpha_i $$
+$$
+
+  \vphantom{\sum}
+  \text{seuil} \leq \sum_i b_i \cdot \alpha_i $$
 
 ### La fonction objectif
  
    La **fonction objectif** combine les contributions des équipements $$ b_i $$ et des bonus $$ y_{jk} $$ pour maximiser les caractéristiques $$\alpha_{i}$$ ou $$\beta_{j,k}$$ importantes comme la force, l’intelligence ou la vitalité, sous la forme :  
    
 $$
+
+  \vphantom{\sum}
+
 \text{Maximiser } \sum_i \left(b_i \cdot \alpha_{i}\right) + \sum_{j,k} \left(y_{jk} \cdot \beta_{j,k}\right)
 $$
 
