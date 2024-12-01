@@ -60,7 +60,6 @@ $$
 $$
 
   \vphantom{\sum}
-
 \text{Maximiser } \sum_i \left(b_i \cdot \alpha_{i}\right) + \sum_{j,k} \left(y_{jk} \cdot \beta_{j,k}\right)
 $$
 
