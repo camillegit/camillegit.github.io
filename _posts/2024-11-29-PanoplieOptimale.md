@@ -54,7 +54,7 @@ $$
 
 ### La fonction objectif
  
-   La **fonction objectif** combine les contributions des équipements $$ b_i $$ et des bonus $$ y_{jk} $$ pour maximiser les caractéristiques $$\alpha_{i}$$ ou $$\beta_{j,k}$$ importantes comme la force, l’intelligence ou la vitalité, sous la forme :  
+   La **fonction objectif** combine les contributions des équipements $$ b_i $$ et des bonus $$ y_{jk} $$ pour maximiser les caractéristiques $$\alpha_{i}$$ ou $$\beta_{jk}$$ importantes comme la force, l’intelligence ou la vitalité, sous la forme :  
    
 $$
 
