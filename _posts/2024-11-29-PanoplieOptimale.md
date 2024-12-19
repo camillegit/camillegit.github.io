@@ -58,7 +58,7 @@ $$
 $$
 
   \vphantom{\sum}
-  b_1 \cdot \cdot \omega_{1} + \sum_i \left(b_i \cdot \alpha_{i}\right) + \sum_{jk} \left(y_{jk} \cdot \beta_{jk}\right) \leq 2 \cdot \omega_{1} $$
+  b_1 \cdot \omega_{1} + \sum_i \left(b_i \cdot \alpha_{i}\right) + \sum_{jk} \left(y_{jk} \cdot \beta_{jk}\right) \leq 2 \cdot \omega_{1} $$
 
 ### La fonction objectif
  
