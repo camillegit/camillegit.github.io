@@ -52,13 +52,6 @@ $$
   \vphantom{\sum} 
   \text{seuil} \leq \sum_i \left(b_i \cdot \alpha_{i}\right) + \sum_{jk} \left(y_{jk} \cdot \beta_{jk}\right) $$
 
-- **Condition d'équipement**  
-   Enfin, certains équipements ne sont équipables que sous certaines conditions de caractéristiques sur l'ensemble équipé, par exemple d'avoir une Force supérieure à un certain seuil. Ces conditions peuvent être multiples et obéissent aux règles de la logique combinatoire. La formulation de ce dernier type de contrainte est un approximation pour linéariser le problème, qui restera valide dans l'espace des possibilités connues déterminé par les règles du jeu. Pour simplifier je présente ici l'exemple d'implémentation d'une unique condition  d'infériorité à $$ \omega_{1} $$ pour un équipement $$ b_1 $$, par exemple faisant partie d'un ensemble de *AND* logiques :  
-   
-$$
-
-  \vphantom{\sum}
-  b_1 \cdot \omega_{1} + \sum_i \left(b_i \cdot \alpha_{i}\right) + \sum_{jk} \left(y_{jk} \cdot \beta_{jk}\right) \leq 2 \cdot \omega_{1} $$
 
 ### La fonction objectif
  
