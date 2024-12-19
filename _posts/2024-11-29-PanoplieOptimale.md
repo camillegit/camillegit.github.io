@@ -59,7 +59,7 @@ $$
 $$
 
   \vphantom{\sum}
-\text{Maximiser }_{b_i,y_{jk}} \: \sum_i \left(b_i \cdot \alpha_{i}\right) + \sum_{j,k} \left(y_{jk} \cdot \beta_{j,k}\right)
+\text{Maximiser }_{b_i,y_{jk}} \: \sum_i \left(b_i \cdot \alpha_{i}\right) + \sum_{jk} \left(y_{jk} \cdot \beta_{jk}\right)
 $$
 
   Nous faisons un somme pondérée des caractéristiques d'intérêt pour définir leur importance relative dans l'objectif (selon ce qui est le plus pertinent pour les mécaniques de jeu).
