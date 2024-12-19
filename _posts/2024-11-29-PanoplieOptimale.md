@@ -66,7 +66,7 @@ $$
    
 $$
 
-  \vphantom{\sum}
+\vphantom{\sum}
 \text{Maximiser }_{b_i,y_{jk}} \: \sum_i \left(b_i \cdot \alpha_{i}\right) + \sum_{jk} \left(y_{jk} \cdot \beta_{jk}\right)
 $$
 
