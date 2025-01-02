@@ -5,6 +5,7 @@ source "https://rubygems.org"
 gem "jekyll-theme-chirpy", "~> 5.6", ">= 5.6.1"
 gem 'csv'
 gem 'logger'
+gem 'base64'
 
 group :test do
   gem "html-proofer", "~> 3.18"
