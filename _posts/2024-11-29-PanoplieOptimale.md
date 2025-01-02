@@ -75,7 +75,7 @@ Pour résoudre ce problème d'optimisation des équipements, il était d'abord n
 
 Après collecte des données, une étape cruciale de tout projet est le nettoyage et le traitement des informations. Les traitements effectuées incluent notamment :
 
-- **Éliminer les équipements non obtenables en jeu** : Nous avons filtré les objets qui ne pouvaient être obtenus dans le jeu, comme ceux obtenus uniquement par des évenements ou autres.
+- **Éliminer les équipements non obtenables en jeu** : Les objets présentes dans la base de données mais non obtenables en jeu ont été filtrés.
   
 - **Recalculer les bonus de panoplie** : Les panoplies offrent des bonus croissants en fonction du nombre d'objets sélectionnés. Il faut donc développer une méthode incrémentale pour calculer les bonus activés à mesure que de nouveaux équipements étaient ajoutés à la sélection.
 
