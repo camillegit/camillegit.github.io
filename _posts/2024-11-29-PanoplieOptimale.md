@@ -69,13 +69,11 @@ $$
 
 ### Collecte des données
 
-Pour résoudre ce problème d'optimisation des équipements, nous avons d'abord dû récolter les données nécessaires à la modélisation du problème. La première étape de notre quête a été de programmer un scrapper avec Beautiful Soup en Python, pour extraire automatiquement des informations de pages web. L'objectif était de collecter les données des équipements depuis l'encyclopédie du jeu disponible sur le site officiel de Dofus. À l'époque, cette encyclopédie regorgeait d'informations détaillées sur les équipements, les bonus de panoplie et les caractéristiques associées. 
-
-Cependant, au détour de la lecture d'une note de mise à jour, une mauvaise nouvelle est tombée : l'encyclopédie du site de Dofus allait être fermée à l'occasion de la refonte du jeu. Heureusement, de rares alternatives existent, comme l'API de DofusDB. Cette API permet de collecter les informations détaillées sur les équipements et les mécanismes du jeu.
+Pour résoudre ce problème d'optimisation des équipements, il était d'abord nécessaire de récolter les données utiles à la modélisation du problème. Après le développement d'un programme de scrapping (lecture d'information sur le code source des pages internet), puis le contretemps d'apprendre l'obsolescence prochaine de la base de donnée utilisée, les données du jeu ont pu être récupérées à travers l'API (l'interface machine) de DofusDB.
 
 ### Traitement et nettoyage des données
 
-Une fois les données collectées, une étape cruciale de tout projet est le nettoyage et le traitement des informations. Les traitements effectuées incluent notamment :
+Après collecte des données, une étape cruciale de tout projet est le nettoyage et le traitement des informations. Les traitements effectuées incluent notamment :
 
 - **Éliminer les équipements non obtenables en jeu** : Nous avons filtré les objets qui ne pouvaient être obtenus dans le jeu, comme ceux obtenus uniquement par des évenements ou autres.
   
@@ -85,13 +83,13 @@ Une fois les données collectées, une étape cruciale de tout projet est le net
 
 ### Programmation du problème
 
-Une fois les données prêtes, il a fallu aborder la partie programmation linéaire du projet. Heureusement, grâce à la bibliothèque PuLP en Python, l’implémentation du modèle d'optimisation a été relativement simple. PuLP permet de formuler simplement et de résoudre des problèmes d'optimisation linéaire, en utilisant les solvers populaires (les algorithmes de résolution des problèmes à proprement parler, qui se basent sur des algorithmes de résolutions bien connus comme la méthode simplexe ou le point intérieur). L'implémentation se fait en suivant les étapes du problème décrites précédemment.
+Une fois les données prêtes, il a fallu aborder la partie programmation linéaire du projet. Heureusement, grâce à la bibliothèque PuLP en Python, l’implémentation du modèle d'optimisation a été relativement simple. PuLP permet de formuler simplement et de résoudre des problèmes d'optimisation linéaire, en utilisant les solvers populaires (les algorithmes de résolution des problèmes à proprement parler, qui se basent sur des algorithmes de résolutions bien connus comme la méthode simplexe ou le point intérieur). L'implémentation se fait en suivant les étapes du problème décrites précédemment. 
 
 ## Conclusion et perspectives
 
 Une fois le modèle d'optimisation développé, il ne reste plus qu'à le tester et à l'affiner. Les résultats sont satisfaisants et permettent d'obtenir des ensembles d'équipements optimisés selon divers critères. Cela a été passablement utile pour avoir une première approximation des équipements les plus compétitifs dans le jeu, en étant totalement agnostique de la base de donnée des équipements. Certaines adaptations sont seulement nécessaires pour prendre en compte davantage de paramètres comme la facilité d'obtention des équipements, et découlant de cela leur prix en jeu. Ces paramètres pourraient être pris en compte dans la fonction d'objectif ou les contraintes dans la mesure où les données seraient disponibles. De plus la fonction d'objectif pourrait maximiser notamment la variable ultime que sont les dégats en combat, ici on arrivera rapidement à la limite de la formulation de problème car le jeu n'est pas transitif et les actions possibles en combat si variées qu'il serait vain de vouloir toutes les maximiser. C'est là que le plaisir du jeu se manifeste, en trouvant les stratégies de combat adaptées à chaque situation, chaque adversaire. Le programme est disponible sur mon GitHub, n'hésitez pas à partager vos propositions d'amélioration.
 
-Si la mise en place de cet algorithme pour ces fins parait futile, l'optimisation linéaire, quadratique, stochastique, dynamique trouve de nombreuses applications en robotique, ou en gestion. J'en veux pour exemple en optimisation quadratique le **modèle de Markowitz** qui s'énonce comme suit : 
+Si la mise en place de cet algorithme pour ces fins parait futile, l'optimisation linéaire, quadratique, stochastique, dynamique trouve de nombreuses applications en robotique, ou en gestion (notamment dans le champ de la recherche opérationnelle). J'en veux pour exemple en optimisation quadratique le **modèle de Markowitz** qui s'énonce comme suit : 
 
 $$
 
