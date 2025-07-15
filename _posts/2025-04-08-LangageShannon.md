@@ -1,5 +1,5 @@
 ---
-title: "Le langage, du Shannon à Wittgenstein"
+title: "Le langage, de Shannon à Wittgenstein"
 author: camille              # for single entry
 date: 2025-04-08 12:00:00 +0100
 categories: [notes de lecture]
