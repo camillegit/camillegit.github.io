@@ -3,7 +3,8 @@ title: "Le langage, de Shannon à Wittgenstein"
 author: camille              # for single entry
 date: 2025-04-08 12:00:00 +0100
 categories: [notes de lecture]
-tags: [langage,nlp,maths]   
+tags: [langage,nlp,maths]
+math: true   
 ---
 
 Avec l'explosion récente de la popularité des modèles de langages, j'ai ressenti le besoin de me replonger dans l'oeuvre majeure de Claude Shannon, la théorie mathématique de la communication. L'auteur ne sera pas inconnu à tout ingénieur qui se sera frotté un jour au traitement de signal, notamment pour son théorème de l'échantillonage. J'aimerais explorer et partager ici les liens entre l'ouvrage de Shannon et les fondement du langage dans lequel nous nous exprimons en tant que concept mathématique. Cela permet de comprendre l'évolution des modèles de génération de langage automatique mais aussi de donner quelques perspectives philosophiques sur notre principal moyen d'expression et le sens profond de la communication.
@@ -31,3 +32,8 @@ On admet alors que les probabilités nous ammènent à former un langage artific
 
 ## 3. L'entropie selon Shannon comme mesure de l'information
 
+Que nous apprend l'étude des probabilités d'un code ou d'une langue sur l'information qu'il est capable de véhiculer ? Shannon répond à cette question en introduisant le concept d'entropie : 
+
+$$
+  \vphantom{\sum}
+   H = -K\ \sum_{n \in i=1} p_i log p_i $$ 
