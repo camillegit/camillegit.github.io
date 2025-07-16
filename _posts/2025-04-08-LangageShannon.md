@@ -7,7 +7,7 @@ tags: [langage,nlp,maths]
 math: true   
 ---
 
-Avec l'explosion récente de la popularité des modèles de langages, j'ai ressenti le besoin de me replonger dans l'oeuvre majeure de Claude Shannon, la théorie mathématique de la communication. L'auteur ne sera pas inconnu à tout ingénieur qui se sera frotté un jour au traitement de signal, notamment pour son théorème de l'échantillonage. J'aimerais explorer et partager ici les liens entre l'ouvrage de Shannon et les fondement du langage dans lequel nous nous exprimons en tant que concept mathématique. Cela permet de comprendre l'évolution des modèles de génération de langage automatique mais aussi de donner quelques perspectives philosophiques sur notre principal moyen d'expression et le sens profond de la communication.
+Avec l'explosion récente de la popularité de l'intelligence artificielle et en particulier des modèles de langages, j'ai ressenti le besoin de me replonger dans l'oeuvre majeure de Claude Shannon, la théorie mathématique de la communication. L'auteur ne sera pas inconnu à tout ingénieur qui se sera frotté un jour au traitement de signal, notamment pour son théorème de l'échantillonage. J'aimerais explorer et partager ici les liens entre l'ouvrage de Shannon et les fondement du langage dans lequel nous nous exprimons en tant que concept mathématique. Cela permet de comprendre l'évolution des modèles de génération de langage automatique mais aussi de donner quelques perspectives philosophiques sur notre principal moyen d'expression et le sens profond de la communication.
 
 ## 1. Le langage, un message comme un autre ?
 
