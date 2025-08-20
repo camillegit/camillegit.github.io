@@ -1,5 +1,5 @@
 ---
-title: "Le langage, de Shannon à Wittgenstein"
+title: "Le langage selon Claude Shannon"
 author: camille              # for single entry
 date: 2025-04-08 12:00:00 +0100
 categories: [notes de lecture]
@@ -45,5 +45,3 @@ L'entropie représente l'incertitude d'une source mais également la quantité d
 L'entropie peut également être conditionnelle et ainsi prendre en compte des probabilités conditionnelles mettant en exergue l'information en tant que dépendance entre les différents symboles d'une séquence, qui semble intuitivement pertinente comme montrée par l'exemple de n-grams. 
 
 Le complément de l'entropie est appelée redondance. En effet, ce qui ne relève pas de l'incertitude est en quelque mesure prévisible et ainsi n'apporte pas d'information, vient seulement répéter une information connue. Loin d'être inutile cette redondance dans le signal permet de rendre le code robuste au bruit. Si l'on venait à éliminer arbitrairement un mot ... cette phrase, le sens en serait toujours intelligible car ce "de" vient de façon assez certaine dans le contexte de la phrase, il était très probable et donc d'une entropie assez faible. Deux cas extrême de redondance dans la langue anglaise sont souvent utilisés pour illustrer cela, le Basic English et le "Finnegans Wake" de James Joyce. Le Basic English comporte 850 mots de vocabulaire et sa redondance est très élevée. Il est nécessaire d'utiliser un grand nombre de symboles pour exprimer un concept sémantique. En revanche, James Joyce utilise un vocabulaire riche, possédant donc une entropie élevée, accroissant la densité d'information. James Joyce réalise une compression du contenu sémantique. Il en va de même des codes adaptés à une réalité particulère comme le langage marin, celui-ci permet également une compression du contenu sémantique notable en vue d'accroître l'efficacité de la communication. 
-
-## 4. La sémantique et le monde
