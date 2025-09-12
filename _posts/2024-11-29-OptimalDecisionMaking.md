@@ -55,7 +55,7 @@ $$
 Here, $$ k $$ is the minimum number of items required to activate bonus $$ y_{jk} $$ specific to set $$ j $$. Bonuses are cumulative (the bonus for equipping 3 items adds to the bonus for equipping 2 items of the same set), so the database must reflect this.  
 
 - **Minimum attributes**  
-  Certain constraints may require a minimum threshold for an attribute \( \alpha_i \), applied to all selected equipment and their associated set bonuses:  
+  Certain constraints may require a minimum threshold for an attribute $$\alpha_{i}$$, applied to all selected equipment and their associated set bonuses:  
 
 $$
 
