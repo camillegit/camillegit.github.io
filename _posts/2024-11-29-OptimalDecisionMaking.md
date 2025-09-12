@@ -1,5 +1,5 @@
 ---
-title: "Find the optimal equiment's combination in a video game"
+title: "Finding the optimal equipment in a video game"
 author: camille              # for single entry
 date: 2024-11-29 12:00:00 +0100
 categories: [experiment]
@@ -29,8 +29,8 @@ For beginners: **linear optimization** is about solving a problem where you aim 
 
 In this problem, **decision variables** are at the core of the model. Each variable represents a concrete choice. For example:  
 
-- \( b_i \): a binary variable equal to 1 if equipment \( i \) is selected, 0 otherwise.  
-- \( y_{jk} \): also a binary variable representing the activation of a specific set bonus for set \( j \) (e.g., Bouftou set) when \( k \) items are equipped.  
+- $$ b_i $$: a binary variable equal to 1 if equipment $$ i $$ is selected, 0 otherwise.  
+- $$ y_{jk} $$: also a binary variable representing the activation of a specific set bonus for set $$ j $$ (e.g., Bouftou set) when $$ k $$ items are equipped.  
 
 These variables determine not only which equipment is chosen but also which bonuses are activated based on equipment synergies. Multiplying these binary variables by the weighted sum of their attributes gives the combined performance of the selected equipment.  
 
@@ -41,35 +41,39 @@ To ensure the model aligns with Dofus rules, several **constraints** apply:
 - **Slot limits**  
   Each equipment category (hat, ring, weapon, etc.) has a dedicated slot, limiting how many can be equipped. For example:  
 
-\[
-\sum_{i \in \text{hats}} b_i \leq 1
-\]
+$$
+ \vphantom{\sum}
+ \sum_{i \in \text{hats}} b_i \leq 1 $$
 
 - **Set bonus activation**  
-  A set bonus \( y_{jk} \) can only be activated if enough items from that set are selected:  
+  A set bonus $$ y_{jk} $$ can only be activated if enough items from that set are selected:  
 
-\[
-y_{jk} \leq \frac{\sum_{i \in j} b_i}{k}
-\]
+$$
+  \vphantom{\sum}
+   y_{jk} \leq \frac{\sum_{i \in j} b_i}{k} $$
 
-Here, \( k \) is the minimum number of items required to activate bonus \( y_{jk} \). Bonuses are cumulative (the bonus for equipping 3 items adds to the bonus for equipping 2 items of the same set), so the database must reflect this.  
+Here, $$ k $$ is the minimum number of items required to activate bonus $$ y_{jk} $$ specific to set $$ j $$. Bonuses are cumulative (the bonus for equipping 3 items adds to the bonus for equipping 2 items of the same set), so the database must reflect this.  
 
 - **Minimum attributes**  
   Certain constraints may require a minimum threshold for an attribute \( \alpha_i \), applied to all selected equipment and their associated set bonuses:  
 
-\[
-\text{threshold} \leq \sum_i (b_i \cdot \alpha_i) + \sum_{jk} (y_{jk} \cdot \beta_{jk})
-\]
+$$
+
+  \vphantom{\sum} 
+  \text{threshold} \leq \sum_i \left(b_i \cdot \alpha_{i}\right) + \sum_{jk} \left(y_{jk} \cdot \beta_{jk}\right) $$
 
 ---
 
 ### Objective Function
 
-The **objective function** combines the contributions of equipment \( b_i \) and bonuses \( y_{jk} \) to maximize important attributes \( \alpha_i \) or \( \beta_{jk} \) such as strength, intelligence, or vitality:  
+The **objective function** combines the contributions of equipment $$ b_i $$ and bonuses $$ y_{jk} $$ to maximize important attributes $$\alpha_{i}$$ or $$\beta_{jk}$$ such as strength, intelligence, or vitality:  
 
-\[
-\text{Maximize}_{b_i,y_{jk}} \sum_i (b_i \cdot \alpha_i) + \sum_{jk} (y_{jk} \cdot \beta_{jk})
-\]
+$$
+
+	\vphantom{\sum}
+	\text{Maximise }_{b_i,y_{jk}} \: \sum_i \left(b_i \cdot \alpha_{i}\right) + \sum_{jk} \left(y_{jk} \cdot \beta_{jk}\right)
+$$
+
 
 We use a weighted sum of relevant attributes to reflect their relative importance for gameplay mechanics.  
 
@@ -101,14 +105,19 @@ With the optimization model developed, it can now be tested and refined. Results
 
 While using this algorithm for this purpose might seem trivial, **linear, quadratic, stochastic, and dynamic optimization** have many applications in robotics and management via operations research. For example, in **quadratic optimization**, the **Markowitz model** is stated as:  
 
-\[
-\text{Maximize}_\mathbf{x} \: \mathbf{\mu}^\top \mathbf{x} - \gamma \mathbf{x}^\top \Sigma \mathbf{x} 
-\]
+$$
 
-\[
+  \vphantom{\sum}
+
+  \text{Maximise}_\mathbf{x} \: \mathbf{\mu}^\top \mathbf{x} - \gamma \mathbf{x}^\top \Sigma \mathbf{x}
+
+$$
+
+$$
 \mathbf{1}^\top \mathbf{x} = 1
-\]
+$$
 
-Where \( \mathbf{x} \) represents normalized asset allocation, \( \mathbf{\mu} \) is the expected return, \( \gamma \) is a weighting factor between risk and return, and \( \Sigma \) is the asset covariance matrix. This normalization constraint is analogous to the equipment slot constraints above.  
+
+Where $$\mathbf{x}$$ represents normalized asset allocation, $$\mathbf{\mu}$$ is the expected return, $$\gamma$$ is a weighting factor between risk and return, and $$\Sigma$$ is the asset covariance matrix. This normalization constraint is analogous to the equipment slot constraints above.  
 
 Though theoretically interesting, the model is highly simplified in practice. Assumptions about future returns or risks mirroring past behavior are questionable, as are assumptions about normal distributions. As in our Dofus example, the usefulness of these solution methods depends on the chosen model and available data.  
