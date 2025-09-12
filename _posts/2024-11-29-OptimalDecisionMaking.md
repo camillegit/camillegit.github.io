@@ -7,19 +7,19 @@ tags: [maths, optimization, programming, operations research]
 math: true
 ---
 
-Like many young adults of my generation, I was profoundly influenced about fifteen years ago by a massively multiplayer online game. After several years away, I recently learned about the release of a revamped version of the game, **Dofus 3.0**, a modernized edition. Intrigued, I couldn’t resist diving back in. However, the game had evolved significantly: new equipment, new sets (*panoplies*), unique bonuses, and mechanics that were completely unfamiliar to me. Rather than feeling overwhelmed, I decided to turn this rediscovery into a small, playful project that would allow me to practice mathematics and programming. The idea was to write a **linear optimization program** to identify the best possible equipment according to targeted objectives. These methods are highly valued in the field of **operations research**, where they are used to make decisions considered optimal in organizational operations. This project, in addition to immersing me back into the world of Dofus, allowed me to apply a few mathematical tools I had always wanted to explore.  
+Like many young adults of my generation, I was profoundly influenced about fifteen years ago by a massively multiplayer online game. After several years away, I recently learned about the release of a revamped version of the game, **Dofus 3.0**, a modernized edition. Intrigued, I couldn’t resist diving back in. However, the game had evolved significantly with new equipment, new sets (*panoplies*), unique bonuses, and mechanics that were completely unfamiliar to me. Rather than feeling overwhelmed, I decided to turn this rediscovery into a small, playful project that would allow me to practice mathematics and programming. The idea was to write a **linear optimization program** to identify the best possible equipment according to targeted objectives. These methods are highly valued in the field of **operations research**, where they are used to make decisions considered optimal in organizational operations. This project, in addition to immersing me back into the world of Dofus, allowed me to apply a few mathematical tools I had always wanted to explore.  
 
 ---
 
 ## Game Mechanics
 
-Dofus is an online role-playing game where players control a character who must confront numerous fantastical and quirky creatures. Progression is partly based on obtaining items and equipment that enable the player to face increasingly tough opponents. These *equipments* are divided into categories (hats, capes, rings, etc.) and grant the character specific *attributes* (strength, intelligence, agility, etc.) that enhance their abilities in combat. Equipment sometimes requires certain conditions to be equipped. Moreover, combining certain pieces of equipment from the same *set* (*panoplie*) grants additional attribute bonuses. The problem becomes non-trivial: it’s not just about finding the optimal equipment for each slot, but rather the most strategic combination. Having equipment that provides the most advantageous attributes gives your character a significant competitive edge!  
+Dofus is an online role-playing game where players control a character who must confront numerous fantastical and quirky creatures. Progression is partly based on obtaining items and equipment that enable the player to face increasingly tough opponents. These *equipments* are divided into categories (hats, capes, rings, etc.) and grant the character specific *attributes* (strength, intelligence, agility, etc.) that enhance their abilities in combat. Equipment sometimes requires certain conditions to be equipped. Moreover, combining certain pieces of equipment from the same *set* (*panoplie*) grants additional attribute bonuses. The problem becomes non-trivial, it’s not just about finding the optimal equipment for each slot, but rather the most strategic combination. Having equipment that provides the most advantageous attributes gives your character a significant competitive edge!  
 
 ---
 
 ## Linear Optimization
 
-For beginners: **linear optimization** is about solving a problem where you aim to maximize or minimize a function (called the objective function) while respecting constraints (the space in which the problem exists) by acting on variables. Simply put, it’s finding the combination of variables that maximizes or minimizes the objective function. Both the constraints and the objective are linear, which simplifies calculations and allows efficient algorithms to be applied. If some variables must be integers, we speak of **integer linear programming (ILP)**. This is particularly suitable for this project: we must choose a discrete—and even binary—set of equipment (you can’t take 0.52 rings or 3 hats) to maximize game attributes like strength or intelligence, while respecting constraints such as the number of available slots or specific synergies. These synergies are called *sets* (*panoplies*); when a certain number of items from a given set are equipped, they grant a bonus.  
+For beginners, **linear optimization** is about solving a problem where you aim to maximize or minimize a function (called the objective function) while respecting constraints (the space in which the problem exists) by acting on variables. Simply put, it’s finding the combination of variables that maximizes or minimizes the objective function. Both the constraints and the objective are linear, which simplifies calculations and allows efficient algorithms to be applied. If some variables must be integers, we speak of **integer linear programming (ILP)**. This is particularly suitable for this project, we must choose a discrete, and even binary, set of equipment (you can’t take 0.52 rings or 3 hats) to maximize game attributes like strength or intelligence, while respecting constraints such as the number of available slots or specific synergies. These synergies are called *sets* (*panoplies*); when a certain number of items from a given set are equipped, they grant a bonus.  
 
 ---
 
@@ -27,7 +27,7 @@ For beginners: **linear optimization** is about solving a problem where you aim 
 
 ### Decision Variables
 
-In this problem, **decision variables** are at the core of the model. Each variable represents a concrete choice. For example:  
+In this problem, **decision variables** are at the core of the model. Each variable represents a concrete choice. For example :  
 
 - $$ b_i $$: a binary variable equal to 1 if equipment $$ i $$ is selected, 0 otherwise.  
 - $$ y_{jk} $$: also a binary variable representing the activation of a specific set bonus for set $$ j $$ (e.g., Bouftou set) when $$ k $$ items are equipped.  
@@ -36,17 +36,17 @@ These variables determine not only which equipment is chosen but also which bonu
 
 ### Constraints
 
-To ensure the model aligns with Dofus rules, several **constraints** apply:  
+To ensure the model aligns with Dofus rules, several **constraints** apply :  
 
 - **Slot limits**  
-  Each equipment category (hat, ring, weapon, etc.) has a dedicated slot, limiting how many can be equipped. For example:  
+  Each equipment category (hat, ring, weapon, etc.) has a dedicated slot, limiting how many can be equipped. For example :   
 
 $$
  \vphantom{\sum}
  \sum_{i \in \text{hats}} b_i \leq 1 $$
 
 - **Set bonus activation**  
-  A set bonus $$ y_{jk} $$ can only be activated if enough items from that set are selected:  
+  A set bonus $$ y_{jk} $$ can only be activated if enough items from that set are selected :  
 
 $$
   \vphantom{\sum}
@@ -55,7 +55,7 @@ $$
 Here, $$ k $$ is the minimum number of items required to activate bonus $$ y_{jk} $$ specific to set $$ j $$. Bonuses are cumulative (the bonus for equipping 3 items adds to the bonus for equipping 2 items of the same set), so the database must reflect this.  
 
 - **Minimum attributes**  
-  Certain constraints may require a minimum threshold for an attribute $$\alpha_{i}$$, applied to all selected equipment and their associated set bonuses:  
+  Certain constraints may require a minimum threshold for an attribute $$\alpha_{i}$$, applied to all selected equipment and their associated set bonuses :  
 
 $$
 
@@ -66,7 +66,7 @@ $$
 
 ### Objective Function
 
-The **objective function** combines the contributions of equipment $$ b_i $$ and bonuses $$ y_{jk} $$ to maximize important attributes $$\alpha_{i}$$ or $$\beta_{jk}$$ such as strength, intelligence, or vitality:  
+The **objective function** combines the contributions of equipment $$ b_i $$ and bonuses $$ y_{jk} $$ to maximize important attributes $$\alpha_{i}$$ or $$\beta_{jk}$$ such as strength, intelligence, or vitality :  
 
 $$
 
@@ -87,7 +87,7 @@ To solve this equipment optimization problem, it was first necessary to collect 
 
 ### Data Cleaning
 
-A crucial step in any project is cleaning and processing the data. Steps included:  
+A crucial step in any project is cleaning and processing the data. Steps included :  
 
 - **Eliminate unobtainable equipment**: Filter out items present in the database but not obtainable in-game.  
 - **Recalculate set bonuses**: Sets offer incremental bonuses depending on the number of items selected. An incremental method was developed to calculate bonuses as new equipment is added.  
@@ -101,9 +101,9 @@ Once the data was ready, the linear programming model was implemented using Pyth
 
 ## Conclusion and Perspectives
 
-With the optimization model developed, it can now be tested and refined. Results are promising, providing optimized equipment sets according to various criteria. This was useful for approximating the most competitive in-game equipment, independently of the database. Some adaptations are needed to account for additional parameters, such as how easily equipment can be obtained or its in-game price. These could be included in the objective function or constraints if the data is available. Additionally, the objective could aim to maximize ultimate combat variables like damage, though this reaches the limits of problem formulation due to the game’s non-transitive mechanics and complex combat options. This is where the real fun lies: finding strategies suited to each situation and opponent. The program is available on my GitHub, and feedback is welcome.  
+With the optimization model developed, it can now be tested and refined. Results are promising, providing optimized equipment sets according to various criteria. This was useful for approximating the most competitive in-game equipment, independently of the database. Some adaptations are needed to account for additional parameters, such as how easily equipment can be obtained or its in-game price. These could be included in the objective function or constraints if the data is available. Additionally, the objective could aim to maximize ultimate combat variables like damage, though this reaches the limits of problem formulation due to the game’s non-transitive mechanics and complex combat options. This is where the real fun lies, finding strategies suited to each situation and opponent. The program is available on my GitHub, and feedback is welcome.  
 
-While using this algorithm for this purpose might seem trivial, **linear, quadratic, stochastic, and dynamic optimization** have many applications in robotics and management via operations research. For example, in **quadratic optimization**, the **Markowitz model** is stated as:  
+While using this algorithm for this purpose might seem trivial, **linear, quadratic, stochastic, and dynamic optimization** have many applications in robotics and management via operations research. For example, in **quadratic optimization**, the **Markowitz model** is stated as :  
 
 $$
 
