@@ -49,7 +49,7 @@ $$
 
 
 - **Caractéristiques minimales**  
-   Certaines contraintes de notre problème peuvent nous permettre d'obtenir un seuil pour des caractéristiques donnée, appliquée à tous les équipements sélectionnés et leurs bonus d'ensemble associés. Dans le jeu cela est particulièrement utile pour obtenir un équipement avec un seuil minimum de "points d'action" ou "points de mouvements" qui permettent à chaque tour d'effectuer certaines actions sans entrer en compte dans la pondération des dégats. Les caractéristiques renseignées dans les vecteurs $$\eta_{i}$$ ou $$\zeta_{jk}$$ peuvent être utilisées comme seuil grace à la contrainte suivante, avec une équation de contrainte par caractéristique présente dans le jeu :  
+   Certaines contraintes de notre problème peuvent nous permettre d'obtenir un seuil pour une caractéristique donnée, appliquée à tous les équipements sélectionnés et leurs bonus d'ensemble associés. Dans le jeu cela est particulièrement utile pour choisir des équipements donnant un seuil minimum de "points d'action" ou "points de mouvements" qui permettent à chaque tour d'effectuer certaines actions et déplacements (sans entrer dans la pondération des dégats à optimiser). Les caractéristiques renseignées dans les vecteurs $$\eta_{i}$$ ou $$\zeta_{jk}$$ peuvent être utilisées comme seuils grâce à la contrainte suivante, avec une équation de contrainte par caractéristique présente dans le jeu :  
    
 $$
 
