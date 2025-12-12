@@ -49,12 +49,22 @@ $$
 
 
 - **Caractéristiques minimales**  
-   Certaines contraintes peuvent donner un seuil pour une caractéristique $$\alpha_{i}$$ donnée, appliquée à tous les équipements sélectionnés et leurs bonus d'ensemble associés, par exemple :  
+   Certaines contraintes de notre problème peuvent nous permettre d'obtenir un seuil pour des caractéristiques donnée, appliquée à tous les équipements sélectionnés et leurs bonus d'ensemble associés. Dans le jeu cela est particulièrement utile pour obtenir un équipement avec un seuil minimum de "points d'action" ou "points de mouvements" qui permettent à chaque tour d'effectuer certaines actions sans entrer en compte dans la pondération des dégats. Les caractéristiques renseignées dans les vecteurs $$\eta_{i}$$ ou $$\zeta_{jk}$$ peuvent être utilisées comme seuil grace à la contrainte suivante, avec une équation de contrainte par caractéristique :  
    
 $$
 
   \vphantom{\sum} 
-  \text{seuil} \leq \sum_i \left(b_i \cdot \alpha_{i}\right) + \sum_{jk} \left(y_{jk} \cdot \beta_{jk}\right) $$
+  \text{Seuil} \leq \sum_i \left(b_i \cdot \eta_{i}\right) + \sum_{jk} \left(y_{jk} \cdot \zeta_{jk}\right) $$
+
+
+- **Conditions d'équipement**
+
+     Certains équipements ne peuvent être équipé que sous certaines conditions de caractéristiques. Par exemple la bien nommée "baguette des limbes" ne pourra être équipée par le joueur qu'à la condition que sa caractéristique de "points d'actions" soient strictement inférieure à 12 et sa caractéristique de "sagesse" soit strictement supérieure à 99. Ainsi nous devons ajouter une contrainte par caractéristique présente dans le jeu où $$\phi_{i}$$ et $$\psi_{jk}$$ renseignent les conditions sur cette caractéristique pour chaque équipement et panoplie respectivement :
+
+$$
+
+  \vphantom{\sum} 
+  \text{Condition minimale (resp. max)} \leq (\geq) \sum_i \left(b_i \cdot \phi_{i}\right) + \sum_{jk} \left(y_{jk} \cdot \psi_{jk}\right) $$
 
 
 ### La fonction objectif
