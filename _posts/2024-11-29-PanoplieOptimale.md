@@ -22,8 +22,8 @@ Pour les noobies (les néophytes sur le sujet), l’optimisation linéaire, cons
 ### Les variables de décision
 
 Dans ce problème, les **variables de décision** sont au cœur du modèle. Chaque variable représente un choix concret à effectuer. Par exemple :
-- $$ b_i $$ : une variable binaire qui vaut 1 si un équipement $$ i $$ est sélectionné, et 0 sinon.
-- $$ y_{jk} $$ : une variable, également binaire, représentant l’activation d’un bonus de panoplie (c'est à dire une combinaison d'équipements) spécifique de l'ensemble $$ j $$, disons la panoplie du Bouftou, pour $$ k $$ objets équipés.
+- $$ b_i $$ : une variable booléenne ou autrement dit binaire qui vaut 1 si un équipement $$ i $$ est sélectionné, et 0 sinon.
+- $$ y_{jk} $$ : une variable, également booléenne, représentant l’activation d’un bonus de panoplie (c'est à dire une combinaison d'équipements) spécifique de l'ensemble d'équipement de la panoplie $$ j $$, disons la panoplie du Bouftou, pour $$ k $$ objets équipés. Si $$ y_{jk} $$ vaut 1 cela signifie qu'un nombre $$ k $$ ou supérieur d'équipements de cette panoplie a été équipé.
 
 Ces variables déterminent non seulement quels équipements sont choisis, mais aussi quels bonus sont activés en fonction des synergies entre équipements. Ces variables étant binaires, leur multiplication avec la somme pondérée de leurs caractéristiques propres nous donnera la performance combinée des équipements choisis.
 
@@ -45,16 +45,16 @@ $$
   \vphantom{\sum}
    y_{jk} \leq \frac{\sum_{i \in j} b_i}{k} $$
   
-   où $$ k $$ est le nombre minimal d’équipements nécessaires pour activer le bonus $$ y_{jk} $$ spécifique à la panoplie $$ j $$. Les bonus seront cumulatifs (le bonus pour avoir équipé 3 équipements d'additionnera au bonus pour avoir équipé 2 équipements de la même panoplie), nous devrons nous assurer que notre base de donnée soit construite ainsi.
+   où $$ k $$ est le nombre minimal d’équipements nécessaires pour activer le bonus $$ y_{jk} $$ correspondant à la panoplie $$ j $$ pour $$ k $$ équipements équipés. Les bonus seront cumulatifs (le bonus pour avoir équipé 3 équipements s'additionnera au bonus pour avoir équipé 2 équipements de la même panoplie), nous devrons nous assurer que notre base de donnée soit construite ainsi.
 
 
 - **Caractéristiques minimales**  
-   Certaines contraintes de notre problème peuvent nous permettre d'obtenir un seuil pour des caractéristiques donnée, appliquée à tous les équipements sélectionnés et leurs bonus d'ensemble associés. Dans le jeu cela est particulièrement utile pour obtenir un équipement avec un seuil minimum de "points d'action" ou "points de mouvements" qui permettent à chaque tour d'effectuer certaines actions sans entrer en compte dans la pondération des dégats. Les caractéristiques renseignées dans les vecteurs $$\eta_{i}$$ ou $$\zeta_{jk}$$ peuvent être utilisées comme seuil grace à la contrainte suivante, avec une équation de contrainte par caractéristique :  
+   Certaines contraintes de notre problème peuvent nous permettre d'obtenir un seuil pour des caractéristiques donnée, appliquée à tous les équipements sélectionnés et leurs bonus d'ensemble associés. Dans le jeu cela est particulièrement utile pour obtenir un équipement avec un seuil minimum de "points d'action" ou "points de mouvements" qui permettent à chaque tour d'effectuer certaines actions sans entrer en compte dans la pondération des dégats. Les caractéristiques renseignées dans les vecteurs $$\eta_{i}$$ ou $$\zeta_{jk}$$ peuvent être utilisées comme seuil grace à la contrainte suivante, avec une équation de contrainte par caractéristique présente dans le jeu :  
    
 $$
 
   \vphantom{\sum} 
-  \text{Seuil} \leq \sum_i \left(b_i \cdot \eta_{i}\right) + \sum_{jk} \left(y_{jk} \cdot \zeta_{jk}\right) $$
+  \text{Seuil de caractéristique} \leq \sum_i \left(b_i \cdot \eta_{i}\right) + \sum_{jk} \left(y_{jk} \cdot \zeta_{jk}\right) $$
 
 
 - **Conditions d'équipement**
