@@ -59,12 +59,19 @@ $$
 
 - **Conditions d'équipement**
 
-     Certains équipements ne peuvent être équipé que sous certaines conditions de caractéristiques. Par exemple la bien nommée "baguette des limbes" ne pourra être équipée par le joueur qu'à la condition que sa caractéristique de "points d'actions" soient strictement inférieure à 12 et sa caractéristique de "sagesse" soit strictement supérieure à 99. Ainsi nous devons ajouter une contrainte par caractéristique présente dans le jeu où $$\phi_{i}$$ et $$\psi_{jk}$$ renseignent les conditions sur cette caractéristique pour chaque équipement et panoplie respectivement :
+     Certains équipements ne peuvent être équipé que sous certaines conditions de caractéristiques. Par exemple la bien nommée "baguette des limbes" ne pourra être équipée par le joueur qu'à la condition que sa caractéristique de "points d'actions" soient strictement inférieure à 12 et sa caractéristique de "sagesse" soit strictement supérieure à 99. Ainsi nous devons formuler une contrainte pour chaque caractéristique présente dans le jeu séparément. Cette contraintes sera en réalité représentée par deux équations. Premièrement, une équation introduit une nouvelle variable binaire $$z_{n}$$, où $$n$$ représente chaque contrainte unique dans l'ensemble des équipements. $$z_{n}$$ peut indiquer si le seuil est respecté ou non.
 
 $$
 
   \vphantom{\sum} 
-  \text{Condition minimale (resp. max)} \leq (\geq) \sum_i \left(b_i \cdot \phi_{i}\right) + \sum_{j, k} \left(y_{jk} \cdot \psi_{jk}\right) $$
+  \text{Condition minimale (resp. max)} \cdot $$z_{n}$$ \leq (\geq) \sum_i \left(b_i \cdot \alpha_{i}\right) + \sum_{j, k} \left(y_{jk} \cdot \beta_{jk}\right) $$
+
+Ensuite une seconde équation permettra d'exclure les équipements concernés par la condition selon la valeur de la variable de décision $$z_{n}$$.
+
+$$
+
+  \vphantom{\sum} 
+  $$z_{n}$$ \geq \sum_{i \in \text{condition n}} b_i $$
 
 
 ### La fonction objectif
