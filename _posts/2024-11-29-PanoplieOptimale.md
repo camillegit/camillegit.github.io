@@ -66,12 +66,12 @@ $$
   \vphantom{\sum} 
   \text{Condition minimale (resp. max)} \cdot z_{n} \leq (\geq) \sum_i \left(b_i \cdot \alpha_{i}\right) + \sum_{j, k} \left(y_{jk} \cdot \beta_{jk}\right) $$
 
-Ensuite une seconde équation permettra d'exclure les équipements concernés par la condition selon la valeur de la variable de décision $$z_{n}$$.
+Ensuite une seconde équation permettra d'exclure les N équipements concernés par la condition selon la valeur de la variable de décision $$z_{n}$$.
 
 $$
 
   \vphantom{\sum} 
-  z_{n} \geq \sum_{i \in \text{condition n}} b_i $$
+  z_{n} \cdot N \geq \sum_{i \in \text{condition n}} b_i $$
 
 
 ### La fonction objectif
