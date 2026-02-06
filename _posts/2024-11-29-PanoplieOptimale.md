@@ -59,14 +59,14 @@ $$
 
 - **Conditions d'équipement sur les caractéristiques**
 
-     Certains équipements ne peuvent être équipé que sous certaines conditions de caractéristiques. Par exemple la bien nommée "baguette des limbes" ne pourra être équipée par le joueur qu'à la condition que sa caractéristique de "points d'actions" soit strictement inférieure à 12 et sa caractéristique de "sagesse" soit strictement supérieure à 99. En optimisation linéaire, on ne peut pas traiter directement de clause "SI/ALORS" directement. La méthode du **Big M** va nous aider en introduisant une constante $$M$$ très grande qui sert de commutateur qui permet d'activer ou de désactiver une contrainte selon la valeur d'une variable binaire $z_{n}$. Les vecteurs $$\khi_{i}$$ ou $$\psi_{jk}$$ contiennent les valeurs de la caractéristique concernée pour le seuil en question.
+     Certains équipements ne peuvent être équipé que sous certaines conditions de caractéristiques. Par exemple la bien nommée "baguette des limbes" ne pourra être équipée par le joueur qu'à la condition que sa caractéristique de "points d'actions" soit strictement inférieure à 12 et sa caractéristique de "sagesse" soit strictement supérieure à 99. En optimisation linéaire, on ne peut pas traiter directement de clause "SI/ALORS" directement. La méthode du **Big M** va nous aider en introduisant une constante $$M$$ très grande qui sert de commutateur qui permet d'activer ou de désactiver une contrainte selon la valeur d'une variable binaire $z_{n}$. Les vecteurs $$\chi_{i}$$ ou $$\psi_{jk}$$ contiennent les valeurs de la caractéristique concernée pour le seuil en question.
       On va donc représenter chaque condition unique par par deux équation de contraintes. Premièrement, une équation introduit le commutateur binaire $$z_{n}$$, où $$n$$ représente chaque contrainte unique dans l'ensemble des équipements. $$z_{n}$$ indique si le seuil est respecté ou non.
       Ensuite une seconde équation vient condtionner la possibilité d'intégrer les N équipements $$b_i$$ concernés par cette condition unique selon la valeur du commutateur $$z_{n}$$ indiquant si la contrainte est respectée. Ces équations sont :
 
 $$
 
   \vphantom{\sum}  
-  \sum_i \left(b_i \cdot \khi_{i}\right) + \sum_{j, k} \left(y_{jk} \cdot \psi_{jk}\right) + \text{Base} \geq \text{Seuil condition} - M \cdot (1 - z_{n})$$
+  \sum_i \left(b_i \cdot \chi_{i}\right) + \sum_{j, k} \left(y_{jk} \cdot \psi_{jk}\right) + \text{Base} \geq \text{Seuil condition} - M \cdot (1 - z_{n})$$
 
 $$
 
