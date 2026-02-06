@@ -57,21 +57,30 @@ $$
   \text{Seuil de caractéristique} \leq \sum_i \left(b_i \cdot \eta_{i}\right) + \sum_{j, k} \left(y_{jk} \cdot \zeta_{jk}\right) $$
 
 
-- **Conditions d'équipement**
+- **Conditions d'équipement sur les caractéristiques**
 
-     Certains équipements ne peuvent être équipé que sous certaines conditions de caractéristiques. Par exemple la bien nommée "baguette des limbes" ne pourra être équipée par le joueur qu'à la condition que sa caractéristique de "points d'actions" soient strictement inférieure à 12 et sa caractéristique de "sagesse" soit strictement supérieure à 99. Ainsi nous devons formuler une contrainte pour chaque caractéristique présente dans le jeu séparément. Cette contraintes sera en réalité représentée par deux équations. Premièrement, une équation introduit une nouvelle variable binaire $$z_{n}$$, où $$n$$ représente chaque contrainte unique dans l'ensemble des équipements. $$z_{n}$$ peut indiquer si le seuil est respecté ou non.
-
-$$
-
-  \vphantom{\sum} 
-  \text{Condition minimale (resp. max)} \cdot z_{n} \leq (\geq) \sum_i \left(b_i \cdot \alpha_{i}\right) + \sum_{j, k} \left(y_{jk} \cdot \beta_{jk}\right) $$
-
-Ensuite une seconde équation permettra d'exclure les N équipements concernés par la condition selon la valeur de la variable de décision $$z_{n}$$.
+     Certains équipements ne peuvent être équipé que sous certaines conditions de caractéristiques. Par exemple la bien nommée "baguette des limbes" ne pourra être équipée par le joueur qu'à la condition que sa caractéristique de "points d'actions" soit strictement inférieure à 12 et sa caractéristique de "sagesse" soit strictement supérieure à 99. En optimisation linéaire, on ne peut pas traiter directement de clause "SI/ALORS" directement. La méthode du **Big M** va nous aider en introduisant une constante $$M$$ très grande qui sert de commutateur : elle permet d'activer ou de désactiver une contrainte selon la valeur d'une variable binaire $z_{n}$.
+      On va donc représenter chaque condition unique par par deux équation de contraintes. Premièrement, une équation introduit le commutateur binaire $$z_{n}$$, où $$n$$ représente chaque contrainte unique dans l'ensemble des équipements. $$z_{n}$$ indique si le seuil est respecté ou non.
+      Ensuite une seconde équation vient condtionner la possibilité d'intégrer les N équipements $$b_i$$ concernés par cette condition unique selon la valeur du commutateur $$z_{n}$$ indiquant si la contrainte est respectée. Ces équations sont :
 
 $$
 
-  \vphantom{\sum} 
+  \vphantom{\sum}  
+  \sum_i \left(b_i \cdot \alpha_{i}\right) + \sum_{j, k} \left(y_{jk} \cdot \beta_{jk}\right) + \text{Base} \geq \text{Seuil condition} - M \cdot (1 - z_{n})$$
+
+$$
+
+  \vphantom{\sum}
   z_{n} \cdot N \geq \sum_{i \in \text{condition n}} b_i $$
+ 
+- **Conditions d'équipement sur les bonus de panoplies**
+
+Une méthode similaire à la précédente est utilisée pour respecter les conditions sur les bonus de panoplies appliquées à certains équipements. Certains équipements ne peuvent être utilisés qu'à la condition que le joueur ne possède pas de bonus de panoplie actifs pour 2 équipements par exemple. Ces bonus ont été définis déjà dans les variables $$y_{jk}$$.
+
+$$
+
+  \vphantom{\sum}
+  \sum_{k \geq V} y_{jk} \geq 1 - M \cdot (1 - z_n)$$
 
 
 ### La fonction objectif
