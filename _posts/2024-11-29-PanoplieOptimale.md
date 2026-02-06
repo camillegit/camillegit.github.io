@@ -49,7 +49,7 @@ $$
 
 
 - **Caractéristiques minimales**  
-   Certaines contraintes de notre problème peuvent nous permettre d'obtenir un seuil pour une caractéristique donnée, appliquée à tous les équipements sélectionnés et leurs bonus d'ensemble associés. Dans le jeu cela est particulièrement utile pour choisir des équipements donnant un seuil minimum de "points d'action" ou "points de mouvements" qui permettent à chaque tour d'effectuer certaines actions et déplacements (sans entrer dans la pondération des dégats à optimiser). Les caractéristiques renseignées dans les vecteurs $$\eta_{i}$$ ou $$\zeta_{jk}$$ peuvent être utilisées comme seuils grâce à la contrainte suivante, avec une équation de contrainte par caractéristique présente dans le jeu :  
+   Certaines contraintes de notre problème peuvent nous permettre d'obtenir un seuil pour une caractéristique donnée, appliquées à tous les équipements sélectionnés et leurs bonus de panoplie associés. Dans le jeu cela est particulièrement utile pour choisir des équipements donnant un seuil minimum de "points d'action" ou "points de mouvements" qui permettent à chaque tour d'effectuer certaines actions et déplacements et ainsi mettre en place certaines stratégies de jeu. Les caractéristiques d'intérêt pour le seuil sont renseignées dans les vecteurs $$\eta_{i}$$ ou $$\zeta_{jk}$$ :  
    
 $$
 
@@ -59,14 +59,14 @@ $$
 
 - **Conditions d'équipement sur les caractéristiques**
 
-     Certains équipements ne peuvent être équipé que sous certaines conditions de caractéristiques. Par exemple la bien nommée "baguette des limbes" ne pourra être équipée par le joueur qu'à la condition que sa caractéristique de "points d'actions" soit strictement inférieure à 12 et sa caractéristique de "sagesse" soit strictement supérieure à 99. En optimisation linéaire, on ne peut pas traiter directement de clause "SI/ALORS" directement. La méthode du **Big M** va nous aider en introduisant une constante $$M$$ très grande qui sert de commutateur : elle permet d'activer ou de désactiver une contrainte selon la valeur d'une variable binaire $z_{n}$.
+     Certains équipements ne peuvent être équipé que sous certaines conditions de caractéristiques. Par exemple la bien nommée "baguette des limbes" ne pourra être équipée par le joueur qu'à la condition que sa caractéristique de "points d'actions" soit strictement inférieure à 12 et sa caractéristique de "sagesse" soit strictement supérieure à 99. En optimisation linéaire, on ne peut pas traiter directement de clause "SI/ALORS" directement. La méthode du **Big M** va nous aider en introduisant une constante $$M$$ très grande qui sert de commutateur qui permet d'activer ou de désactiver une contrainte selon la valeur d'une variable binaire $z_{n}$. Les vecteurs $$\khi_{i}$$ ou $$\psi_{jk}$$ contiennent les valeurs de la caractéristique concernée pour le seuil en question.
       On va donc représenter chaque condition unique par par deux équation de contraintes. Premièrement, une équation introduit le commutateur binaire $$z_{n}$$, où $$n$$ représente chaque contrainte unique dans l'ensemble des équipements. $$z_{n}$$ indique si le seuil est respecté ou non.
       Ensuite une seconde équation vient condtionner la possibilité d'intégrer les N équipements $$b_i$$ concernés par cette condition unique selon la valeur du commutateur $$z_{n}$$ indiquant si la contrainte est respectée. Ces équations sont :
 
 $$
 
   \vphantom{\sum}  
-  \sum_i \left(b_i \cdot \alpha_{i}\right) + \sum_{j, k} \left(y_{jk} \cdot \beta_{jk}\right) + \text{Base} \geq \text{Seuil condition} - M \cdot (1 - z_{n})$$
+  \sum_i \left(b_i \cdot \khi_{i}\right) + \sum_{j, k} \left(y_{jk} \cdot \psi_{jk}\right) + \text{Base} \geq \text{Seuil condition} - M \cdot (1 - z_{n})$$
 
 $$
 
@@ -75,7 +75,7 @@ $$
  
 - **Conditions d'équipement sur les bonus de panoplies**
 
-Une méthode similaire à la précédente est utilisée pour respecter les conditions sur les bonus de panoplies appliquées à certains équipements. Certains équipements ne peuvent être utilisés qu'à la condition que le joueur ne possède pas de bonus de panoplie actifs pour 2 équipements par exemple. Ces bonus ont été définis déjà dans les variables $$y_{jk}$$.
+	Une méthode similaire à la précédente est utilisée pour respecter les conditions sur les bonus de panoplies appliquées à certains équipements. Certains équipements ne peuvent être utilisés qu'à la condition que le joueur ne possède pas de bonus de panoplie actifs pour 2 équipements par exemple. Ces bonus ont été définis déjà dans les variables $$y_{jk}$$.
 
 $$
 
