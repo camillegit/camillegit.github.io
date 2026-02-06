@@ -75,12 +75,12 @@ $$
  
 - **Conditions d'équipement sur les bonus de panoplies**
 
-	Une méthode similaire à la précédente est utilisée pour respecter les conditions sur les bonus de panoplies appliquées à certains équipements. Certains équipements ne peuvent être utilisés qu'à la condition que le joueur ne possède pas de bonus de panoplie actifs pour 2 équipements par exemple. Ces bonus ont été définis déjà dans les variables $$y_{jk}$$.
+	Une méthode similaire à la précédente est utilisée pour respecter les conditions sur les bonus de panoplies appliquées à certains équipements. Certains équipements ne peuvent être utilisés qu'à la condition que le joueur ne possède pas de bonus de panoplie actifs pour $$V$$ équipements, par exemple 2 ou 3. Ces bonus ont été définis déjà dans les variables $$y_{jk}$$ pour une panoplie $$j$$ et $$k$$ équipements de cette panoplie équipés.
 
 $$
 
   \vphantom{\sum}
-  \sum_{k \geq V} y_{jk} \geq 1 - M \cdot (1 - z_n)$$
+  \sum_{j \in k \geq V} y_{jk} \geq 1 - M \cdot (1 - z_n)$$
 
 
 ### La fonction objectif
