@@ -12,5 +12,5 @@ Prenez ces pages comme des productions d’un esprit en quête, des éclats d’
 
 # À propos de l’auteur  
 
-Je suis un jeune homme curieux, aventureux, et sans doute un peu rêveur. Je vis dans les vallées profondes des hautes montagnes suisses, là où le silence des cimes dialogue avec les ondes lacustres. J’aime les pentes escarpés autant que les chemins de la connaissance, les horizons ouverts autant que les pages d’un livre. Ici, je partage ce qui me traverse, sans autre guide que la sincérité et le plaisir de l’échange.  
+Je suis un jeune homme curieux, aventureux, et sans doute un peu rêveur. Je vis dans les vallées profondes des hautes montagnes suisses, là où le silence des cimes dialogue avec les ondes lacustres. J’aime les pentes escarpés autant que les chemins de la connaissance, les horizons ouverts autant que les pages d’un livre. Ici, je partage ce qui me traverse.  
 
