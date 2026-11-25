@@ -206,9 +206,9 @@ La pratique du skipper correspond à la **commande prédictive**, ou commande à
 
 ### La décision du départ
 
-Reprenons le matin du départ, le 1er novembre, avec le run GEFS de 6 h et la polaire IMOCA. Les cinq portes sont placées trois jours après le départ, au milieu de l'Atlantique nord, entre 42,8° et 46,9° N. Voici ce que vaut chacune d'elles sur les 31 scénarios, en heures de course.
+Reprenons le matin du départ, le 1er novembre, avec le run GEFS de 6 h et la polaire IMOCA. Les cinq portes sont placées trois jours après le départ, au milieu de l'Atlantique nord, entre 42,8° et 46,9° N. Voici ce que vaut chacune d'elles sur les 31 scénarios, en heures de course. La dernière colonne donne le temps dans le seul scénario du membre de contrôle, celui que regarderait un routeur qui ne connaît qu'une prévision.
 
-| Porte | Position | Moyenne (Laplace) | Pire cas (Wald) | Hurwicz ($$ \alpha = 0{,}5 $$) | Regret maximal (Savage) | Membre de contrôle |
+| Porte | Position | Moyenne (Laplace) | Pire cas (Wald) | Hurwicz ($$ \alpha = 0{,}5 $$) | Regret maximal (Savage) | Scénario de contrôle |
 |---|---|---|---|---|---|---|
 | P1 | 42,8° N 25,8° O | 294,8 | 338,8 | 297,4 | 43,7 | **300,0** |
 | P2 | 43,5° N 28,2° O | 291,5 | 323,8 | 290,1 | 30,6 | **300,0** |
@@ -216,12 +216,12 @@ Reprenons le matin du départ, le 1er novembre, avec le run GEFS de 6 h et la po
 | P4 | 45,0° N 28,6° O | **291,1** | **320,0** | **288,3** | **17,7** | 304,3 |
 | P5 | 46,9° N 27,0° O | 291,3 | 332,9 | 295,2 | 19,1 | 304,5 |
 
-Sur ce cas réel, les quatre règles tombent d'accord et choisissent P4, la porte la plus à l'ouest du côté nord. La route déterministe, celle qu'on obtient en ne regardant que le membre de contrôle, passe par P1 (à égalité avec P2), plus au sud et plus à l'est. Son regret maximal atteint 44 heures, contre 18 heures pour P4. Les moyennes, elles, sont très proches, entre 291 et 295 heures. L'écart entre les portes se joue presque entièrement dans quelques scénarios défavorables, ce que la moyenne écrase et ce que le regret fait ressortir.
+Sur ce cas réel, les quatre règles tombent d'accord et choisissent P4, la porte la plus à l'ouest du côté nord. La route déterministe, celle qu'on obtient en ne regardant que le scénario du membre de contrôle, passe par P1 (à égalité avec P2), plus au sud et plus à l'est. Son regret maximal atteint 44 heures, contre 18 heures pour P4. Les moyennes, elles, sont très proches, entre 291 et 295 heures. L'écart entre les portes se joue presque entièrement dans quelques scénarios défavorables, ce que la moyenne écrase et ce que le regret fait ressortir.
 
-![Matrice des regrets au départ](/assets/img/posts/controlerobuste/regrets_depart.png)
-_Le regret de chaque porte dans chaque scénario. La plupart des cases sont presque blanches, toutes les portes se valent dans la majorité des scénarios. Le membre 17 pénalise lourdement les portes du sud et de l'est, le membre 14 pénalise la porte la plus au nord. P4 est la seule porte qui ne perd jamais plus de 18 heures._
+![Matrice des regrets au départ](/assets/img/posts/controlerobuste/regrets_depart_v2.png)
+_Le regret de chaque porte dans chaque scénario. La plupart des cases sont presque blanches, toutes les portes se valent dans la majorité des scénarios. Chaque scénario porte le numéro du membre GEFS qui le produit, 00 étant le contrôle. Le scénario 17 pénalise lourdement les portes du sud et de l'est, le scénario 14 pénalise la porte la plus au nord. P4 est la seule porte qui ne perd jamais plus de 18 heures._
 
-![Distribution des durées pour deux choix de porte](/assets/img/posts/controlerobuste/distribution_depart.png)
+![Distribution des durées pour deux choix de porte](/assets/img/posts/controlerobuste/distribution_depart_v2.png)
 _La durée de course dans chacun des 31 scénarios, pour la porte du déterministe et pour la porte du regret minimax. Les médianes diffèrent de quelques heures. La différence se voit surtout à droite, où la porte du déterministe garde une queue de scénarios lents._
 
 L'accord des quatre règles n'a rien d'une loi. Dans l'exemple jouet plus haut, elles choisissaient trois routes différentes. Ici, P4 est à la fois bonne en moyenne et jamais très mauvaise, et toutes les règles la retiennent. La **valeur de l'information parfaite** donne un autre ordre de grandeur. Si l'on savait à l'avance quel scénario va se réaliser, on gagnerait en moyenne 3,4 heures sur le meilleur choix fait sans le savoir. C'est peu sur douze jours de course, et cela dit que la décision du départ comptait moins que ce que laissait croire la dispersion des routes.
@@ -230,7 +230,7 @@ L'accord des quatre règles n'a rien d'une loi. Dans l'exemple jouet plus haut, 
 
 Le projet a fait la même analyse toutes les six heures pour un Class40 virtuel qui suivait la route conseillée. Sur les 32 cycles où il restait plus de cinq jours de course, entre le 1er et le 9 novembre, la porte du déterministe n'a jamais été celle que choisissaient à la fois Laplace, Wald et Savage. Le regret minimax a choisi la même porte que la moyenne dans la moitié des cycles, et la même que le déterministe dans 7 cycles seulement. Le regret maximal médian de la porte déterministe est de 19 heures, contre 12 heures pour la porte de Savage.
 
-![Regret maximal au fil de la course](/assets/img/posts/controlerobuste/regret_course.png)
+![Regret maximal au fil de la course](/assets/img/posts/controlerobuste/regret_course_v2.png)
 _Le regret maximal de la porte choisie, à chaque cycle, pour le déterministe et pour le regret minimax. Les deux courbes se rejoignent à mesure que l'arrivée approche et que les scénarios se ressemblent._
 
 Il faut lire ce graphique avec prudence. La règle de Savage minimise par construction le regret maximal, et elle ne peut donc qu'être en dessous de l'autre courbe. Le graphique montre que le déterministe s'expose parfois à des regrets de 50 à 60 heures, surtout dans les trois premiers jours, et que la décision robuste ramène ce risque autour de 15 heures. Il ne prouve pas que la route robuste aurait été plus rapide dans la météo qui s'est réalisée.
