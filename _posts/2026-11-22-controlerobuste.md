@@ -7,13 +7,11 @@ tags: [maths,contrôle,décision,voile,programmation,recherche opérationnelle]
 math: true
 ---
 
-<!-- Les blocs [À toi] et [Résultats] sont à compléter avec le projet. -->
-
 J'aime beaucoup la voile, et ce mois de novembre se courait la Route du Rhum, la transatlantique en solitaire entre Saint-Malo et Pointe-à-Pitre. En suivant la flotte sur la cartographie, je me suis demandé comment les skippers choisissaient leur route. Faut-il passer au nord d'une dépression ou plonger au sud chercher les alizés ? Sur cette édition, les multicoques (Ultim, Ocean Fifty et Vintage Multi) ont le droit d'être conseillés par une équipe à terre. Les skippers des monocoques IMOCA et Class40 décident seuls, avec les fichiers météo et le logiciel de routage qu'ils ont à bord.
 
 J'ai voulu comprendre ce que fait ce logiciel, alors j'en ai écrit un petit. Une question plus intéressante est vite apparue. Un routeur sait calculer la route la plus rapide pour une météo donnée. Or la météo de demain reste incertaine, et les centres de prévision fournissent plusieurs scénarios. Choisir une route devient alors un problème de décision sous incertitude, celui que traite le **contrôle robuste**. Je pars ici des données d'entrée d'un routeur, puis je présente la méthode des isochrones et ses liens avec la programmation dynamique et l'optimisation linéaire, avant d'arriver au contrôle robuste et à la notion de regret.
 
-<!-- [À toi] Une phrase sur le projet lui-même (langage, pourquoi ce format, ce qu'il produit). -->
+Le projet est écrit en Python. Un Raspberry Pi a tourné seul pendant toute la course. Toutes les six heures, à chaque nouveau run du modèle américain, il archivait les positions de la flotte relevées sur la cartographie officielle et les fichiers météo, routait les bateaux depuis leur position réelle, puis recalculait un faisceau de routes d'ensemble et une décision robuste. Tout est archivé avec les données d'entrée, ce qui permet de rejouer chaque calcul après coup. Les figures de cet article sortent de ces archives.
 
 ## Les données d'entrée
 
@@ -27,9 +25,10 @@ $$ V = V(\text{TWS}, \text{TWA}) $$
 
 On les trace en coordonnées polaires, d'où leur nom. Pour chaque force de vent on obtient une courbe, et la distance au centre donne la vitesse dans chaque direction. On y lit ce que tout marin sent à la barre. Face au vent le bateau s'arrête, il atteint sa vitesse maximale au travers ou au largue, et au vent arrière il va souvent plus vite en tirant des bords qu'en filant droit. Les architectes calculent les polaires avec des logiciels de prédiction de vitesse (VPP pour *velocity prediction program*), puis les équipes les corrigent avec les mesures faites en navigation. Le routeur lit ce tableau et interpole entre les valeurs.
 
-<!-- [À toi] Source des polaires utilisées dans le projet (quel bateau, quelle classe). -->
+Les polaires des équipes restent secrètes. J'ai utilisé les seules polaires publiques, celles des certificats de jauge ORC, calculées par un VPP. Pour les Class40, j'en ai tiré deux versions, la médiane de 31 certificats de la classe et celle d'un scow récent, un Mach 2 de 2022. Pour les IMOCA, j'ai pris le certificat d'un plan Verdier de 2021. Ces polaires sont prudentes. Comparés aux positions réelles, les bateaux allaient 1,3 à 1,5 fois plus vite que ce que prévoyait mon routeur, et l'écart est le plus fort pour les IMOCA, dont les foils sont mal pris en compte par la jauge.
 
-<!-- [Figure] Une polaire tracée pour plusieurs forces de vent. -->
+![Polaire d'un Class40 Mach 2 pour quatre forces de vent](/assets/img/posts/controlerobuste/polaire_class40.png)
+_Polaire du Class40 Mach 2 (certificat ORC). Le point marque la vitesse maximale pour chaque force de vent. Plus le vent forcit, plus l'angle le plus rapide s'écarte vers le largue._
 
 ### Les fichiers météo
 
@@ -39,9 +38,10 @@ Le problème est que l'atmosphère est un système chaotique. Edward Lorenz l'a 
 
 Les centres de prévision ont trouvé une parade, la **prévision d'ensemble**. Ils font tourner le même modèle plusieurs fois, en perturbant légèrement les conditions initiales. Chaque calcul s'appelle un membre et donne un scénario plausible. L'ensemble américain GEFS compte 31 membres (un contrôle et trente perturbés), l'ensemble européen ENS en compte 51. Quand les membres restent groupés, la prévision est fiable. Quand ils divergent, l'atmosphère hésite entre plusieurs évolutions, et le marin aussi.
 
-<!-- [À toi] Quel ensemble est utilisé dans le projet, résolution, pas de temps, horizon. -->
+J'ai utilisé l'ensemble GEFS, gratuit et publié toutes les six heures, sur une grille de 0,5° couvrant l'Atlantique de 5° à 55° N. Les échéances sont espacées de 6 h jusqu'à dix jours, puis de 12 h jusqu'à seize jours. La route déterministe utilise GFS à 0,25°, et le modèle européen IFS sert de second avis.
 
-<!-- [Figure] Le vent d'un même point selon les 31 membres, en fonction du temps (le « panache »). -->
+![Panache des 31 membres GEFS](/assets/img/posts/controlerobuste/panache_gefs.png)
+_Le vent prévu par les 31 membres en un point situé au milieu de l'Atlantique nord, sur le chemin des IMOCA, pour le run du matin du départ. Les membres restent groupés pendant deux jours. L'écart type passe de 2 nœuds à J+1 à 4 nœuds à J+3, puis à près de 9 nœuds à J+7, autant dire qu'à cette échéance la prévision ne dit plus grand-chose en ce point._
 
 ## Calculer la meilleure route pour une météo donnée
 
@@ -49,15 +49,16 @@ Commençons par le cas simple où l'on connaît la météo. On cherche la suite 
 
 ### La méthode des isochrones
 
-La méthode la plus répandue dans les logiciels de routage, et celle que j'ai programmée, est celle des **isochrones**. Elle a été formalisée par Hagiwara en 1989 pour le routage des navires. Son principe est intuitif. Depuis le point de départ, on essaie tous les caps possibles, par exemple tous les cinq degrés. Pour chaque cap, on lit le vent dans le fichier météo, on en déduit la vitesse grâce à la polaire, et on calcule où se trouve le bateau après un pas de temps $$ \Delta t $$.
+La méthode la plus répandue dans les logiciels de routage, et celle que j'ai programmée, est celle des **isochrones**. Proposée par R. W. James en 1957 pour la marine américaine, elle a été adaptée au calcul sur ordinateur par Hagiwara en 1989. Son principe est intuitif. Depuis le point de départ, on essaie tous les caps possibles, par exemple tous les cinq degrés. Pour chaque cap, on lit le vent dans le fichier météo, on en déduit la vitesse grâce à la polaire, et on calcule où se trouve le bateau après un pas de temps $$ \Delta t $$.
 
 $$ p_{k+1} = p_k + \Delta t \cdot V\big(\text{TWS}(p_k, t_k), \text{TWA}(\theta, p_k, t_k)\big) \cdot \vec{e}_\theta $$
 
 Ici $$ p_k $$ est la position au pas $$ k $$, $$ \theta $$ le cap choisi et $$ \vec{e}_\theta $$ un vecteur de longueur un qui pointe dans la direction du cap. On obtient un nuage de points atteignables. On garde seulement son enveloppe extérieure, la courbe des points les plus éloignés dans chaque direction. Cette courbe est l'isochrone, littéralement l'ensemble des points atteignables en un même temps. On recommence depuis chacun de ses points, et les isochrones s'étendent comme des ronds dans l'eau déformés par le vent. Dès qu'une isochrone touche l'arrivée, on remonte la chaîne des points qui y mènent, et cette chaîne est la route optimale.
 
-<!-- [À toi] Détails d'implémentation (pas de temps, nombre de caps testés, gestion des côtes, temps de calcul). -->
+Dans mon implémentation, le pas de temps est d'une heure au large et d'un quart d'heure à l'approche de la Guadeloupe. Je teste un cap tous les 5°, et l'élagage garde le point le plus éloigné dans chaque secteur de 1° vu du départ. Un masque des côtes écarte les déplacements qui toucheraient la terre, et chaque virement ou empannage coûte un temps perdu tiré des durées de manœuvre observées dans chaque classe. Pour un IMOCA, la traversée entière, environ 3 600 milles et 257 isochrones, se calcule en une dizaine de secondes sur un portable.
 
-<!-- [Figure] Isochrones successives sur une carte, et la route remontée. -->
+![Isochrones et route optimale d'un IMOCA](/assets/img/posts/controlerobuste/isochrones.png)
+_Une isochrone par jour pour un IMOCA, avec le vent GFS du matin du départ. Les fronts avancent vite dans le flux de nord-est du golfe de Gascogne, puis s'étirent vers le sud-ouest dans les alizés. La route optimale, en orange, est remontée depuis l'arrivée._
 
 ### Le lien avec la programmation dynamique
 
@@ -93,13 +94,18 @@ Cette dualité a une histoire qui nous servira plus loin. En octobre 1947, Georg
 
 Revenons à l'incertitude. Avec un ensemble de 31 membres, je lance le calcul des isochrones 31 fois, une fois par scénario. J'obtiens 31 routes optimales $$ r_1, \dots, r_{31} $$. Quand on les superpose sur une carte, on obtient un plat de spaghettis. Certaines passent au nord, d'autres au sud, certaines se ressemblent beaucoup.
 
-<!-- [Figure] Les 31 routes superposées. -->
+![Les 31 routes d'ensemble](/assets/img/posts/controlerobuste/spaghettis_gefs.png)
+_Les 31 routes optimales d'un IMOCA au départ, une par membre GEFS. Elles restent groupées pendant 48 heures, puis se séparent. Un groupe de 11 routes monte au nord, les 20 autres restent plus au sud. Selon le scénario, la traversée prend de 10,6 à 14 jours._
 
 Chacune de ces routes est la meilleure dans son propre monde. Pour savoir ce qu'elle vaut ailleurs, je fais naviguer chaque route $$ r_i $$ dans chaque scénario $$ s_j $$. J'obtiens une matrice de temps de parcours $$ T_{ij} $$, le temps de la route $$ i $$ quand la météo est celle du scénario $$ j $$. Par construction, la meilleure valeur de chaque colonne se trouve sur la diagonale, puisque la route $$ r_j $$ a été calculée pour le scénario $$ j $$.
 
 Il faut préciser ce que veut dire « faire naviguer une route dans un autre scénario ». On peut suivre la trace géographique, suivre la suite de caps, ou suivre la route en s'autorisant des corrections. Ce choix change la matrice.
 
-<!-- [À toi] Choix retenu dans le projet. -->
+Dans le projet, j'ai choisi une quatrième voie, qui ressemble davantage à ce que fait un marin. Je ne m'engage pas sur une route entière, seulement sur le prochain choix structurant, représenté par une **porte**. C'est un point de passage placé à l'échéance où le faisceau se sépare, ici trois jours après le départ. Je place cinq portes qui couvrent la largeur du faisceau à cette échéance, du sud au nord. Pour chaque porte $$ g $$ et chaque scénario $$ m $$, le temps total est
+
+$$ T_{gm} = 	au(	ext{départ} 	o g \mid m) + 	au(g 	o 	ext{arrivée} \mid m) $$
+
+La seconde partie est le **recours**. Une fois la porte passée, je suppose qu'on routera au mieux dans la météo qui se réalisera. L'hypothèse est optimiste, puisqu'elle suppose qu'on saura alors quel scénario est le bon, mais c'est le cadre classique de la programmation stochastique à deux étapes. La matrice compte 5 lignes et 31 colonnes, et la question devient le choix d'une ligne.
 
 Reste la vraie question. Quelle ligne de la matrice choisir ?
 
@@ -121,7 +127,7 @@ Ici $$ A $$ est la table des gains, $$ x $$ et $$ y $$ sont les probabilités av
 
 Ce minimax a des racines viennoises. Morgenstern dirigeait à Vienne l'Institut autrichien de recherche sur la conjoncture et fréquentait le colloque mathématique de Karl Menger, lui-même membre du Cercle de Vienne, celui qui lisait ligne à ligne le [*Tractatus* de Wittgenstein](/posts/tractatus/). C'est par Menger que Morgenstern recrute un jeune mathématicien, Abraham Wald. Von Neumann croisait aussi ce monde. En 1930, à la conférence de Königsberg coorganisée par le Cercle de Vienne, il défendait le programme formaliste quand Kurt Gödel y a annoncé son théorème d'incomplétude, et il fut l'un des premiers à en saisir la portée.
 
-<!-- [À toi] Lien avec l'article à venir sur Wittgenstein et le Cercle de Vienne. -->
+Wittgenstein, Gödel, von Neumann, Morgenstern et Wald se sont donc croisés, de près ou de loin, autour des mêmes séminaires viennois. Le Cercle de Vienne cherchait à fonder la connaissance sur la logique et la vérification. De ce milieu sont sortis à la fois le théorème d'incomplétude, qui borne ce que la logique peut prouver, et la théorie des jeux, qui apprend à décider quand on ne peut pas tout savoir. Cette histoire mérite un article à elle seule, et je la développerai dans un futur article.
 
 Wald, émigré aux États-Unis en 1938, transpose le minimax à la statistique. Il imagine un jeu entre le décideur et la Nature. La Nature choisit l'état du monde, le décideur choisit son action, et faute de connaître les intentions de la Nature, il se prémunit contre le pire. Pour notre routeur, la Nature choisit le scénario météo, et le skipper choisit sa route.
 
@@ -191,34 +197,67 @@ Le contrôle stochastique suppose connue la loi de $$ w $$ et minimise le coût 
 
 La pratique du skipper correspond à la **commande prédictive**, ou commande à horizon glissant. On optimise sur tout l'horizon de la prévision, on applique seulement le premier bord, puis on recommence à l'arrivée du fichier suivant, toutes les six heures pour GEFS. Cette façon de faire introduit la notion de **recours**. Une bonne décision robuste garde de bonnes options ouvertes pour la suite. Choisir tôt un côté d'une dorsale est irréversible, et ce coût de l'irréversibilité devrait entrer dans le calcul.
 
-<!-- SECTION À COMPLÉTER
-## Résultats
+## Ce qu'a donné la Route du Rhum
 
- [Résultats] Tableau des routes choisies par Laplace, Wald et Savage sur un départ de la Route du Rhum. 
+### La décision du départ
 
- [Résultats] Carte de chaleur de la matrice des regrets. 
+Reprenons le matin du départ, le 1er novembre, avec le run GEFS de 6 h et la polaire IMOCA. Les cinq portes sont placées trois jours après le départ, au milieu de l'Atlantique nord, entre 42,8° et 46,9° N. Voici ce que vaut chacune d'elles sur les 31 scénarios, en heures de course.
 
- [Résultats] Distribution des temps de parcours de la route retenue sur les 31 scénarios. 
+| Porte | Position | Moyenne (Laplace) | Pire cas (Wald) | Hurwicz ($$ \alpha = 0{,}5 $$) | Regret maximal (Savage) | Membre de contrôle |
+|---|---|---|---|---|---|---|
+| P1 | 42,8° N 25,8° O | 294,8 | 338,8 | 297,4 | 43,7 | **300,0** |
+| P2 | 43,5° N 28,2° O | 291,5 | 323,8 | 290,1 | 30,6 | **300,0** |
+| P3 | 44,4° N 25,0° O | 292,0 | 323,4 | 289,7 | 40,1 | 306,8 |
+| P4 | 45,0° N 28,6° O | **291,1** | **320,0** | **288,3** | **17,7** | 304,3 |
+| P5 | 46,9° N 27,0° O | 291,3 | 332,9 | 295,2 | 19,1 | 304,5 |
 
- [Résultats] Comparaison avec la route réellement suivie par les skippers, si les traces sont accessibles. 
--->
+Sur ce cas réel, les quatre règles tombent d'accord et choisissent P4, la porte la plus à l'ouest du côté nord. La route déterministe, celle qu'on obtient en ne regardant que le membre de contrôle, passe par P1 (à égalité avec P2), plus au sud et plus à l'est. Son regret maximal atteint 44 heures, contre 18 heures pour P4. Les moyennes, elles, sont très proches, entre 291 et 295 heures. L'écart entre les portes se joue presque entièrement dans quelques scénarios défavorables, ce que la moyenne écrase et ce que le regret fait ressortir.
+
+![Matrice des regrets au départ](/assets/img/posts/controlerobuste/regrets_depart.png)
+_Le regret de chaque porte dans chaque scénario. La plupart des cases sont presque blanches, toutes les portes se valent dans la majorité des scénarios. Le membre 17 pénalise lourdement les portes du sud et de l'est, le membre 14 pénalise la porte la plus au nord. P4 est la seule porte qui ne perd jamais plus de 18 heures._
+
+![Distribution des durées pour deux choix de porte](/assets/img/posts/controlerobuste/distribution_depart.png)
+_La durée de course dans chacun des 31 scénarios, pour la porte du déterministe et pour la porte du regret minimax. Les médianes diffèrent de quelques heures. La différence se voit surtout à droite, où la porte du déterministe garde une queue de scénarios lents._
+
+L'accord des quatre règles n'a rien d'une loi. Dans l'exemple jouet plus haut, elles choisissaient trois routes différentes. Ici, P4 est à la fois bonne en moyenne et jamais très mauvaise, et toutes les règles la retiennent. La **valeur de l'information parfaite** donne un autre ordre de grandeur. Si l'on savait à l'avance quel scénario va se réaliser, on gagnerait en moyenne 3,4 heures sur le meilleur choix fait sans le savoir. C'est peu sur douze jours de course, et cela dit que la décision du départ comptait moins que ce que laissait croire la dispersion des routes.
+
+### Cycle après cycle
+
+Le projet a fait la même analyse toutes les six heures pour un Class40 virtuel qui suivait la route conseillée. Sur les 32 cycles où il restait plus de cinq jours de course, entre le 1er et le 9 novembre, la porte du déterministe n'a jamais été celle que choisissaient à la fois Laplace, Wald et Savage. Le regret minimax a choisi la même porte que la moyenne dans la moitié des cycles, et la même que le déterministe dans 7 cycles seulement. Le regret maximal médian de la porte déterministe est de 19 heures, contre 12 heures pour la porte de Savage.
+
+![Regret maximal au fil de la course](/assets/img/posts/controlerobuste/regret_course.png)
+_Le regret maximal de la porte choisie, à chaque cycle, pour le déterministe et pour le regret minimax. Les deux courbes se rejoignent à mesure que l'arrivée approche et que les scénarios se ressemblent._
+
+Il faut lire ce graphique avec prudence. La règle de Savage minimise par construction le regret maximal, et elle ne peut donc qu'être en dessous de l'autre courbe. Le graphique montre que le déterministe s'expose parfois à des regrets de 50 à 60 heures, surtout dans les trois premiers jours, et que la décision robuste ramène ce risque autour de 15 heures. Il ne prouve pas que la route robuste aurait été plus rapide dans la météo qui s'est réalisée.
+
+### Et les vrais skippers ?
+
+Trois jours après le départ, les IMOCA de tête étaient répartis sur toute la largeur des portes, et au-delà.
+
+![Positions réelles des IMOCA à +72 h](/assets/img/posts/controlerobuste/realite_portes.png)
+_Les positions relevées sur la cartographie officielle le 4 novembre vers 12 h UTC, et les cinq portes calculées au départ. Les dix premiers IMOCA sont en orange._
+
+Malizia, deuxième à l'arrivée, est passé entre P2 et P4, tout près de la porte robuste. Deux bateaux du top dix étaient plus au nord-ouest, entre P4 et P5. Le futur vainqueur, MACSF, était seul au sud-ouest, à plus de 200 milles de la porte la plus proche. À la même échéance, aucune des 31 routes de mon routeur n'était aussi loin à l'ouest. Une partie de l'écart vient de la vitesse, puisque les vrais bateaux allaient plus vite que mes polaires et avaient donc parcouru plus de chemin en trois jours. Le reste est un vrai choix d'option. Son skipper avait sans doute de meilleures polaires, d'autres modèles météo et surtout une lecture du ciel que mon routeur n'a pas. MACSF a coupé la ligne à Pointe-à-Pitre le 12 novembre au matin, après un peu moins de onze jours de course, quand ma route déterministe en prévoyait 11,2 et la médiane de l'ensemble 12,3. L'écart avec la médiane de l'ensemble vient en bonne partie des polaires ORC trop prudentes.
+
+Cette comparaison rappelle la limite de l'exercice. Le regret ne protège qu'à l'intérieur des scénarios qu'on a envisagés. Si la bonne option est absente du faisceau, aucune règle de décision ne la trouvera.
 
 ## Conclusion
 
 Partir d'une question de voile m'a fait traverser plusieurs domaines qui se répondent. Les isochrones sont de la programmation dynamique, la programmation dynamique est le dual d'un programme linéaire, et la dualité linéaire est le théorème du minimax de von Neumann. Le contrôle robuste reprend ce minimax pour décider face à une Nature dont on ignore les intentions. Le regret de Savage en donne une version plus fine, qui compare chaque décision à ce qu'on aurait pu faire de mieux. Dérisquer, c'est accepter un peu moins de performance moyenne pour rester toujours proche de la bonne décision. L'idée dépasse largement la voile, elle vaut pour un investissement ou un choix technologique, partout où l'on dispose de scénarios sans probabilités crédibles.
 
-## Références (à vérifier)
+## Références
 
-- Zermelo, E. (1931). « Über das Navigationsproblem bei ruhender oder veränderlicher Windverteilung ». *ZAMM*, 11.
+- James, R. W. (1957). *Application of Wave Forecasts to Marine Navigation*. U.S. Navy Hydrographic Office.
+- Zermelo, E. (1931). « Über das Navigationsproblem bei ruhender oder veränderlicher Windverteilung ». *Zeitschrift für Angewandte Mathematik und Mechanik*, 11(2), 114-124.
 - Hagiwara, H. (1989). *Weather Routing of (Sail-Assisted) Motor Vessels*. Thèse, Delft.
 - Bellman, R. (1957). *Dynamic Programming*. Princeton University Press.
-- Lorenz, E. N. (1963). « Deterministic Nonperiodic Flow ». *Journal of the Atmospheric Sciences*, 20.
-- von Neumann, J. (1928). « Zur Theorie der Gesellschaftsspiele ». *Mathematische Annalen*, 100.
+- Lorenz, E. N. (1963). « Deterministic Nonperiodic Flow ». *Journal of the Atmospheric Sciences*, 20(2), 130-141.
+- von Neumann, J. (1928). « Zur Theorie der Gesellschaftsspiele ». *Mathematische Annalen*, 100, 295-320.
 - von Neumann, J., Morgenstern, O. (1944). *Theory of Games and Economic Behavior*. Princeton University Press.
-- Dantzig, G. B. (1982). « Reminiscences about the origins of linear programming ». *Operations Research Letters*, 1.
-- Knight, F. H. (1921). *Risk, Uncertainty and Profit*.
+- Dantzig, G. B. (1982). « Reminiscences about the origins of linear programming ». *Operations Research Letters*, 1(2), 43-48.
+- Knight, F. H. (1921). *Risk, Uncertainty and Profit*. Houghton Mifflin.
 - Wald, A. (1950). *Statistical Decision Functions*. Wiley.
-- Savage, L. J. (1951). « The Theory of Statistical Decision ». *JASA*, 46.
+- Savage, L. J. (1951). « The Theory of Statistical Decision ». *Journal of the American Statistical Association*, 46(253), 55-67.
 - Ben-Tal, A., El Ghaoui, L., Nemirovski, A. (2009). *Robust Optimization*. Princeton University Press.
 - Zhou, K., Doyle, J. C., Glover, K. (1996). *Robust and Optimal Control*. Prentice Hall.
 - NOAA, Global Ensemble Forecast System (GEFS). ECMWF, Ensemble Prediction System (ENS).

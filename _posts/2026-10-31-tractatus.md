@@ -14,15 +14,17 @@ Le livre de Ludwig Wittgenstein commence ainsi : "Ce livre ne sera peut-être co
 
 Le Tractatus est organisé en propositions numérotées, qui sont certainement toutes importantes, je vous incite à les parcourir dans leur ensemble. Les sept nombres entiers portent les thèses principales, et les décimales viennent les commenter. Wittgenstein précise lui-même que les nombres indiquent le poids logique de chaque proposition. Ainsi 1.1 commente 1, et 1.12 commente 1.1. Pour donner une clé de lecture à qui voudrait ouvrir le livre, je reprends cette numérotation. Chaque partie porte le numéro des propositions qui m'ont le plus inspiré, et mes réflexions viennent à leur suite.
 
-<!-- Les sept propositions principales (numéros et sens vérifiés sur le texte allemand, formulation française à aligner sur ton édition) :
-1 Le monde est tout ce qui a lieu.
-2 Ce qui a lieu, le fait, est la subsistance d'états de choses.
-3 L'image logique des faits est la pensée.
-4 La pensée est la proposition pourvue de sens.
-5 La proposition est une fonction de vérité des propositions élémentaires.
-6 La forme générale de la fonction de vérité est [p̄, ξ̄, N(ξ̄)].
-7 Sur ce dont on ne peut parler, il faut garder le silence.
-Option : les lister ici comme sommaire du livre. -->
+Voici les sept propositions principales, qui forment à elles seules un résumé du livre.
+
+1. Le monde est tout ce qui a lieu.
+2. Ce qui a lieu, le fait, est la subsistance d'états de choses.
+3. L'image logique des faits est la pensée.
+4. La pensée est la proposition pourvue de sens.
+5. La proposition est une fonction de vérité des propositions élémentaires.
+6. La forme générale de la fonction de vérité est $$ [\bar{p}, \bar{\xi}, N(\bar{\xi})] $$.
+7. Sur ce dont on ne peut parler, il faut garder le silence.
+
+Le livre descend du monde vers la pensée, de la pensée vers la proposition, puis de la proposition vers la logique, avant de s'arrêter net sur le silence. Les citations suivent la traduction de Gilles-Gaston Granger (Gallimard, collection Tel, 2001).
 
 ## Avant-propos
 
@@ -36,7 +38,7 @@ Souvent, seule la deuxième partie a été retenue ; je préfère pour ma part l
 
 On retrouve dans ma compréhension un concept analogue au théorème d'incomplétude de Gödel, pour lequel il y a l'ensemble de ce qui est vrai et l'ensemble de ce qui est démontrable. Pour Wittgenstein il y aurait l'ensemble des pensées (P), et le sous-ensemble des pensées exprimables (PE ⊊ P, contenu dans les pensées sans lui être égal). On peut élargir la sémantique de pensée à concept et d'autres encore, qui peuvent alors trouver des applications pratiques. En effet, il est nécessaire de concevoir ce qui peut être transmis dès lors que le langage constitue une courroie de transmission de l'action et de l'information, c'est le cas dans les organisations et de plus en plus dans les systèmes avec l'intégration de traitement de langage naturel (NLP, ou plus abusivement appelé IA).
 
-<!-- [À toi] Nuance possible sur Gödel : le Tractatus (1921) précède Gödel (1931), et Wittgenstein parle de sens plutôt que de vérité (ce qui ne peut être dit peut se montrer, 4.1212). -->
+Cette analogie est la mienne, et je la fais avec un siècle de recul. Le Tractatus paraît en 1921, dix ans avant le théorème de Gödel, et je ne cherche pas de parallèle entre les deux hommes ni entre leurs résultats. L'analogie se situe dans les ensembles. Chez Gödel, l'ensemble de ce qui est démontrable est strictement contenu dans l'ensemble de ce qui est vrai. Chez Wittgenstein, tel que je le lis, l'ensemble de ce qui peut être dit est strictement contenu dans l'ensemble de ce qui peut être pensé, ou montré (4.1212). Dans les deux cas, un langage, formel ou naturel, n'atteint qu'une partie d'un ensemble plus vaste, et c'est cette inclusion stricte qui m'intéresse.
 
 ## 1 Le monde est tout ce qui a lieu
 
@@ -55,8 +57,6 @@ La seconde moitié de 1.12 est plus subtile. La totalité des faits détermine a
 Cette lecture prépare la suite. Si le monde est fait de faits, et si les faits s'expriment par des propositions, alors ce qu'on peut dire du monde dépend de la langue dont on dispose pour former ces propositions.
 
 ## 2 Ce qui a lieu, le fait, est la subsistance d'états de choses
-
-<!-- [À vérifier] Citations de la partie 2 traduites par moi depuis l'allemand. À aligner sur ton édition française. -->
 
 > 2 Ce qui a lieu, le fait, est la subsistance d'états de choses.
 >
@@ -173,10 +173,17 @@ Les frontières du langage deviennent alors les frontières de l'action. Ce qu'u
 
 Hors de la loi du système $$ f $$, il y a la consigne $$ r $$, l'endroit où l'on veut l'emmener. On peut décrire le monde, prouver son évolution, les conséquences des actions, mais jamais affirmer ce qui est souhaitable. Définir cette consigne c'est la morale, elle échappe à la vérité ou à la logique. Je développe cette idée dans [mon article sur la pensée systémique](/posts/systemthinking/).
 
-<!-- [À toi] Piste pour développer : un système (ou une IA) peut décrire, prévoir, prouver et maintenant agir, mais le souhaitable reste à l'extérieur. C'est la fonction objectif qu'on lui donne. Lien avec le choix du regret dans l'article sur le contrôle robuste et avec le "but" chez Meadows. -->
+Les systèmes que l'on construit rendent cette frontière très concrète. Un modèle décrit le monde, une simulation prévoit son évolution, un solveur prouve qu'une solution est optimale, et un agent d'IA peut maintenant agir. Aucun d'eux ne dit ce qu'il faut vouloir. Le souhaitable leur est donné de l'extérieur, sous la forme d'une fonction objectif. Mon routeur de voilier calcule la route la plus rapide parce que je lui ai demandé de minimiser le temps. Je pourrais lui demander de minimiser le pire cas, ou le regret, comme dans [mon article sur le contrôle robuste](/posts/controlerobuste/), et il choisirait une autre route sans que la météo ait changé d'un souffle. Le choix du critère ne se déduit d'aucun calcul. C'est une décision sur ce qui compte.
 
-<!-- ## 7 Garder le silence
-[À toi] Conclusion. Retour à l'avant-propos et à la proposition 7. Tu préférais "dire clairement" à "garder le silence". Avec l'IA, ce qui est dit est de plus en plus fait, donc dire clairement devient une exigence pratique. Annonce éventuelle de l'article sur le Cercle de Vienne. -->
+Donella Meadows place les buts d'un système tout en haut de sa liste des points de levier, juste après les paradigmes. On retrouve 6.421 sous une autre forme. Le levier le plus puissant d'un système est aussi celui que la description du système ne fournit pas. Plus les IA deviennent capables, plus cette question se déplace vers ceux qui écrivent leurs objectifs.
+
+## 7 Sur ce dont on ne peut parler, il faut garder le silence
+
+> 7 Sur ce dont on ne peut parler, il faut garder le silence.
+
+Le livre s'arrête sur cette phrase, sans commentaire décimal. J'ai dit au début que je préférais la première moitié de l'avant-propos, « tout ce qui proprement peut être dit peut être dit clairement ». Après ce parcours, les deux moitiés me semblent former une seule règle. Il faut tracer la frontière, dire clairement ce qui est en deçà, et ne pas faire semblant de parler de ce qui est au-delà.
+
+Cette règle prend aujourd'hui un poids pratique. Tant que le langage décrivait, une phrase confuse produisait une pensée confuse. Avec les agents d'IA, ce qui est dit est de plus en plus fait. Une consigne ambiguë devient une action ambiguë, et une action ne se relit pas comme un texte. Dire clairement cesse d'être une exigence de philosophe pour devenir une condition de sécurité. La langue naturelle ne suffit pas à garantir cette clarté. Ce qui doit déclencher une action devrait être dit dans un langage dédié, dont le vocabulaire et la grammaire excluent l'ambiguïté, comme la langue symbolique de 3.325. La conversation reste en langue naturelle, l'ordre exécuté passe par le langage dédié, et on peut le vérifier avant qu'il ne devienne un acte. Le silence garde lui aussi sa place. Ce que l'on ne sait pas formuler, l'éthique, le but, la consigne, il vaut mieux le garder entre les mains humaines plutôt que de le confier à une machine sous une forme approximative.
 
 ## Mise en pratique, l'ontologie d'une menuiserie
 
@@ -495,5 +502,3 @@ Le troisième chargement l'emporte. C'est aussi le moins intuitif, puisqu'il cou
 {: .prompt-tip }
 
 Branchons enfin un modèle de langage sur cette ontologie. Le responsable logistique pourrait demander en français qui livrer vendredi, et obtenir le chargement accompagné de sa justification, chaque étape étant vérifiable dans l'ontologie. C'est la piste que j'aimerais explorer dans un prochain article.
-
-<!-- [À toi] Garder ou non l'annonce d'un prochain article. -->

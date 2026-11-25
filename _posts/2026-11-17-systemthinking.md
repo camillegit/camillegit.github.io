@@ -9,7 +9,6 @@ mermaid: true
 ---
 
 <!-- Notations de tout l'article : u entrée, x état, y sortie, w bruit, r consigne. Populations de Lotka-Volterra : N proies, P prédateurs. -->
-<!-- Les citations de Meadows sont paraphrasées de mémoire, chapitres indiqués. À vérifier et remplacer par les citations exactes de ton exemplaire. -->
 
 Pendant la Première Guerre mondiale, les pêcheurs de l'Adriatique restent au port. Quand ils reprennent la mer, les biologistes constatent une chose étrange. Les requins et les raies représentent une part bien plus grande des prises qu'avant la guerre. Les espèces sont les mêmes, leurs comportements aussi. L'explication se trouve dans la structure du système, dans la façon dont proies et prédateurs se nourrissent les uns des autres.
 
@@ -17,7 +16,7 @@ Ce genre de phénomène est le sujet de *Thinking in Systems*, le livre de Donel
 
 Je veux aussi défendre une thèse. Comprendre un système, c'est connaître la loi qui le fait évoluer. La science y travaille, et elle progresse. Piloter un système demande une chose de plus, savoir où l'on veut l'emmener. Cette deuxième question sort du domaine de la science, et c'est elle qui occupe de plus en plus de place à mesure que la première trouve ses réponses.
 
-<!-- [À toi] Pourquoi ce sujet maintenant (lecture de Meadows, projet, conversation) ? -->
+Cette façon de penser a beaucoup structuré la mienne. Je l'ai acquise pendant mes cours de théorie du contrôle et de systèmes à l'EPFL, et elle me sert depuis bien au-delà de l'automatique. Ses principes élémentaires, l'état, la rétroaction, le délai, la commandabilité et l'observabilité, relèvent des mathématiques appliquées. Je pense qu'ils devraient être bien plus largement partagés, et le livre de Meadows montre qu'on peut les transmettre presque sans équations. Je m'en sers ici comme d'un pont entre [mes notes sur le Tractatus](/posts/tractatus/), où je séparais ce que l'on peut décrire du monde et ce que l'on veut en faire, et mon [routeur de voilier](/posts/controlerobuste/), où la même séparation apparaît en équations.
 
 ## *Thinking in Systems* de Donella Meadows
 
@@ -41,7 +40,7 @@ Ajoutons un délai dans une boucle équilibrante et le système se met à oscill
 
 Le livre décrit ensuite des pièges, des structures qui reviennent dans des systèmes très différents et produisent toujours les mêmes problèmes (chapitre 5). La tragédie des communs, l'escalade entre deux concurrents, le succès qui va aux plus forts, la dérive vers la médiocrité quand on baisse ses objectifs à chaque échec. Le piège que je rencontre le plus souvent est le transfert de charge. On traite le symptôme par une aide extérieure, le système perd sa capacité à se corriger seul, et il devient dépendant de l'aide.
 
-<!-- [À toi] Un exemple personnel ou professionnel de transfert de charge. -->
+La médecine en donne l'exemple le plus parlant. Une personne souffre du dos parce qu'elle reste assise toute la journée. La solution de fond serait de bouger davantage et de renforcer ses muscles, ce qui demande des semaines avant de soulager. Un antidouleur soulage tout de suite, alors elle y revient. Pendant ce temps, la cause reste en place, les muscles s'affaiblissent encore, et il faut des doses plus fortes pour le même effet. Le symptôme est traité, la capacité du corps à se corriger seul s'est réduite, et la dépendance à l'aide extérieure s'est installée. Meadows recommande de renforcer la capacité propre du système plutôt que de multiplier l'aide extérieure.
 
 Le chapitre 6 classe les **points de levier**, les endroits où l'on peut intervenir sur un système, du moins efficace au plus efficace.
 
@@ -102,7 +101,8 @@ $$ V(N, P) = \delta N - \gamma \ln N + \beta P - \alpha \ln P $$
 
 reste constante au cours du temps. Chaque état initial dessine donc son propre cycle fermé, et le système y tourne indéfiniment. On voit ici très concrètement que l'avenir est contenu dans l'état initial. Deux mers qui partent de populations différentes suivent deux cycles différents pour toujours.
 
-<!-- [Figure] Le portrait de phase, plusieurs cycles fermés autour de l'équilibre pour différents états initiaux, et l'évolution de $$ N $$ et $$ P $$ dans le temps. -->
+![Portrait de phase et évolution temporelle du modèle de Lotka-Volterra](/assets/img/posts/systemthinking/lotka_volterra.png)
+_À gauche, trois états initiaux donnent trois cycles fermés autour de l'équilibre. À droite, l'évolution dans le temps pour l'un d'eux. Le pic des prédateurs suit celui des proies avec un retard. Paramètres $$ \alpha = 1 $$, $$ \beta = 0{,}5 $$, $$ \gamma = 0{,}6 $$, $$ \delta = 0{,}2 $$._
 
 Ce modèle est fragile. Une petite modification, par exemple une limite à la croissance des proies quand la nourriture manque, transforme les cycles fermés en spirales qui convergent vers l'équilibre. Meadows répète que tout ce que nous savons du monde est un modèle. Lotka-Volterra en est une bonne illustration, il est faux dans le détail et juste dans ce qu'il enseigne.
 
@@ -116,7 +116,7 @@ $$ \dot{x} = f(x, u), \qquad y = h(x) + w $$
 
 Le terme $$ w $$ représente le **bruit**, toutes les imperfections de la mesure. On mesure toujours le système à travers un instrument imparfait. Je laisse le bruit de côté dans la suite, et j'y reviendrai dans [l'article sur le contrôle robuste](/posts/controlerobuste/).
 
-En vocabulaire Meadows, l'entrée est un flux qu'on pilote, et la sortie est un flux d'information. Ce dernier est le septième point de levier, et l'automatique dit pourquoi il compte autant. On corrige seulement ce qu'on mesure.
+En vocabulaire Meadows, l'entrée est un flux qu'on pilote, et la sortie est un flux d'information. Ce dernier est le sixième point de levier, et l'automatique dit pourquoi il compte autant. On corrige seulement ce qu'on mesure.
 
 ### Le principe de Volterra
 
@@ -142,9 +142,8 @@ Rudolf Kalman a posé, vers 1960, deux questions qui structurent toute l'automat
 
 $$ \operatorname{rang}\begin{bmatrix} B & AB & \cdots & A^{n-1}B \end{bmatrix} = n $$
 
-Pour la pêche, autour de l'équilibre, $$ B $$ vaut $$ (-N^\star, -P^\star) $$ puisque l'effort de pêche retire à chaque population une part proportionnelle à son niveau. Le calcul donne une matrice de rang 2. Avec le seul effort de pêche, on peut donc déplacer localement les deux populations où l'on veut.
+Pour la pêche, autour de l'équilibre, $$ B $$ vaut $$ (-N^\star, -P^\star) $$ puisque l'effort de pêche retire à chaque population une part proportionnelle à son niveau. Le calcul donne une matrice de rang 2[^commandabilite]. Avec le seul effort de pêche, on peut donc déplacer localement les deux populations où l'on veut.
 
-<!-- Détail du calcul, à mettre en note si besoin : A = [[0, -βN*], [δP*, 0]], AB = (βN*P*, -δN*P*), det[B AB] = N*P*(δN* + βP*) > 0. -->
 
 La seconde question est l'**observabilité**. À partir des mesures dont je dispose, puis-je reconstruire l'état ? Pour $$ y = Cx $$, elle se lit dans un critère symétrique.
 
@@ -167,7 +166,7 @@ flowchart LR
 
 Un régulateur des pêches pourrait ainsi augmenter l'effort quand la proportion de requins dépasse la consigne, et le réduire quand elle passe en dessous. La boucle fermée est une boucle équilibrante qu'on ajoute volontairement au système. Les délais de Meadows y gardent tout leur danger. Une correction trop forte sur un système lent le fait osciller, comme le concessionnaire et ses voitures.
 
-<!-- [À toi] Un exemple concret de boucle fermée (pilote automatique de bateau ?). -->
+Le pilote automatique d'un voilier est l'exemple que j'ai le plus souvent sous les yeux. La consigne $$ r $$ est un cap, ou un angle par rapport au vent. La sortie $$ y $$ est le cap mesuré par le compas, ou l'angle mesuré par la girouette. L'entrée $$ u $$ est l'angle de barre. À chaque instant, le pilote mesure l'écart et tourne la barre pour le réduire. Réglé trop mou, il laisse le bateau dériver de sa route. Réglé trop dur, il corrige trop fort, dépasse le cap, corrige dans l'autre sens, et le bateau se met à zigzaguer. C'est l'oscillation du concessionnaire, avec un délai qui tient à l'inertie du bateau et au temps que met la houle à le faire tourner. Les pilotes de course mesurent aussi la vitesse de rotation du bateau pour anticiper ses mouvements, ce qui revient à réduire le délai de la boucle.
 
 ## La consigne, ou ce que la science ne dit pas
 
@@ -187,7 +186,7 @@ Il faut rester honnête sur les limites de cette convergence. Même avec une loi
 
 Quand l'incertitude sur $$ f $$ recule, la question de $$ r $$ occupe toute la place. L'ADEME a publié en 2021 quatre scénarios pour atteindre la neutralité carbone en France en 2050. Ils vont d'une société de sobriété à un pari sur les technologies de captage du carbone. Les quatre reposent sur la même connaissance du système, et ils décrivent quatre sociétés très différentes. Choisir entre eux est un choix politique. Combien d'efforts demander à la génération actuelle pour les suivantes, comment répartir ces efforts entre les pays riches et les autres, entre les plus aisés et les plus modestes, quelle place laisser au reste du vivant. Toutes ces questions portent sur la consigne.
 
-Le philosophe David Hume avait formulé cette séparation dès 1739. On ne peut pas déduire ce qui doit être de ce qui est. Une description du monde, aussi complète soit-elle, ne contient aucune obligation. On parle depuis de la guillotine de Hume.
+Le philosophe David Hume avait formulé cette séparation en 1740, dans le troisième livre de son *Traité de la nature humaine*. On ne peut pas déduire ce qui doit être de ce qui est. Une description du monde, aussi complète soit-elle, ne contient aucune obligation. On parle depuis de la guillotine de Hume.
 
 Max Weber en a tiré les conséquences pour le rapport entre science et politique. Dans *Le Savant et le Politique*, qui réunit deux conférences de 1917 et 1919, il assigne à la science un rôle précis. Elle peut dire quels moyens conviennent à une fin donnée, quelles conséquences entraîne chaque choix, et ce qu'il coûte. Le choix de la fin lui échappe. Weber parle d'une guerre des dieux pour désigner le conflit des valeurs entre lesquelles chacun doit trancher. Le scientifique qui prétend choisir la consigne au nom de la science sort de son rôle. Le politique qui conteste la loi $$ f $$ pour éviter de débattre de la consigne sort du sien.
 
@@ -207,17 +206,19 @@ Meadows retrouve la même idée par un autre chemin. Dans son classement des poi
 
 Meadows fournit une grammaire pour regarder les systèmes, avec ses stocks, ses boucles, ses délais et ses buts. L'espace d'état fournit le calcul, avec les valeurs propres, la commandabilité et l'observabilité. Le modèle de Lotka-Volterra montre les deux à l'œuvre, d'abord comme système libre qui déroule son état initial, puis comme système qu'on pilote et qu'on observe. La science réduit l'incertitude sur la loi du système, et plus elle avance, plus il nous revient de choisir la consigne. Dans [l'article suivant](/posts/controlerobuste/), je regarde ce qui se passe quand la loi du système reste incertaine, et comment le choix de ce qu'on minimise fait partie de la décision.
 
-## Références (à vérifier)
+## Références
 
 - Meadows, D. H. (2008). *Thinking in Systems: A Primer*. Chelsea Green. (Trad. fr. *Pour une pensée systémique*, Rue de l'échiquier, 2022.)
 - Meadows, D. H. (1999). *Leverage Points: Places to Intervene in a System*. Sustainability Institute.
-- Meadows, D. H., Meadows, D. L., Randers, J., Behrens, W. W. (1972). *The Limits to Growth*.
-- Lotka, A. J. (1925). *Elements of Physical Biology*.
-- Volterra, V. (1926). « Variazioni e fluttuazioni del numero d'individui in specie animali conviventi ». *Memorie della R. Accademia dei Lincei*.
-- Kalman, R. E. (1960). « On the general theory of control systems ». *Proceedings of the First IFAC Congress*.
+- Meadows, D. H., Meadows, D. L., Randers, J., Behrens, W. W. (1972). *The Limits to Growth*. Universe Books.
+- Lotka, A. J. (1925). *Elements of Physical Biology*. Williams & Wilkins.
+- Volterra, V. (1926). « Variazioni e fluttuazioni del numero d'individui in specie animali conviventi ». *Memorie della R. Accademia Nazionale dei Lincei*, série VI, vol. 2, 31-113.
+- Kalman, R. E. (1960). « On the general theory of control systems ». *Proceedings of the First IFAC Congress*, Moscou.
 - Åström, K. J., Murray, R. M. (2008). *Feedback Systems: An Introduction for Scientists and Engineers*. Princeton (gratuit en ligne).
 - GIEC (2021). *Climate Change 2021: The Physical Science Basis*, résumé pour les décideurs, section D.1.
 - ADEME (2021). *Transition(s) 2050. Choisir maintenant, agir pour le climat*.
-- Hume, D. (1739). *Traité de la nature humaine*, livre III, partie I, section I.
+- Hume, D. (1739-1740). *Traité de la nature humaine*, livre III (1740), partie I, section I.
 - Weber, M. (1919). *Le Savant et le Politique*.
 - Camus, A. (1942). *Le Mythe de Sisyphe*. Gallimard.
+
+[^commandabilite]: Autour de l'équilibre, $$ A = \begin{bmatrix} 0 & -\beta N^\star \\ \delta P^\star & 0 \end{bmatrix} $$ et $$ B = (-N^\star, -P^\star) $$. On obtient $$ AB = (\beta N^\star P^\star, -\delta N^\star P^\star) $$, puis $$ \det\begin{bmatrix} B & AB \end{bmatrix} = N^\star P^\star (\delta N^\star + \beta P^\star) > 0 $$.
