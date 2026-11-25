@@ -43,6 +43,11 @@ J'ai utilisé l'ensemble GEFS, gratuit et publié toutes les six heures, sur une
 ![Panache des 31 membres GEFS](/assets/img/posts/controlerobuste/panache_gefs.png)
 _Le vent prévu par les 31 membres en un point situé au milieu de l'Atlantique nord, sur le chemin des IMOCA, pour le run du matin du départ. Les membres restent groupés pendant deux jours. L'écart type passe de 2 nœuds à J+1 à 4 nœuds à J+3, puis à près de 9 nœuds à J+7, autant dire qu'à cette échéance la prévision ne dit plus grand-chose en ce point._
 
+Une carte rend la divergence plus concrète. Voici trois membres du même run, quatre jours après le départ.
+
+![Trois scénarios de vent à J+4](/assets/img/posts/controlerobuste/trois_scenarios.png)
+_Le vent prévu le 5 novembre à 12 h UTC par trois membres GEFS partis du même état initial. La couleur donne la force du vent, les flèches le sens dans lequel il souffle, et les lignes fines les isobares. En orange, la route IMOCA optimale dans chaque scénario, en trait plein jusqu'à cette date. Dans le membre de contrôle, une dépression creusée vers 40° N 30° O se trouve sur le chemin de la flotte. Dans le membre 17, la dépression est moins creuse et plus au sud, et le bateau a déjà atteint 46° N par le nord. Dans le membre 14, une dépression plus creuse se trouve au nord, vers 50° N, et le bateau passe plus au sud. Trois scénarios plausibles, et jusqu'à 300 milles d'écart entre les positions du bateau au bout de quatre jours._
+
 ## Calculer la meilleure route pour une météo donnée
 
 Commençons par le cas simple où l'on connaît la météo. On cherche la suite de caps qui amène le bateau le plus vite possible à l'arrivée, sachant que le vent change selon le lieu et l'heure. Le mathématicien Ernst Zermelo a posé ce problème dès 1931, pour un navire pris dans un vent variable. Dans le langage de mon article sur [la pensée systémique](/posts/systemthinking/), c'est un système en espace d'état. L'état est la position du bateau, la commande est le cap.
@@ -95,7 +100,7 @@ Cette dualité a une histoire qui nous servira plus loin. En octobre 1947, Georg
 Revenons à l'incertitude. Avec un ensemble de 31 membres, je lance le calcul des isochrones 31 fois, une fois par scénario. J'obtiens 31 routes optimales $$ r_1, \dots, r_{31} $$. Quand on les superpose sur une carte, on obtient un plat de spaghettis. Certaines passent au nord, d'autres au sud, certaines se ressemblent beaucoup.
 
 ![Les 31 routes d'ensemble](/assets/img/posts/controlerobuste/spaghettis_gefs.png)
-_Les 31 routes optimales d'un IMOCA au départ, une par membre GEFS. Elles restent groupées pendant 48 heures, puis se séparent. Un groupe de 11 routes monte au nord, les 20 autres restent plus au sud. Selon le scénario, la traversée prend de 10,6 à 14 jours._
+_Les 31 routes optimales d'un IMOCA au départ, une par membre GEFS. Chaque route est colorée selon la latitude à laquelle elle franchit le méridien 30° O, du plus clair au sud au plus foncé au nord. Les routes restent groupées pendant deux jours, puis s'ouvrent en éventail. Au passage de 30° O, elles s'étalent de 40° à 48° N, sans former deux groupes nets. En pointillé, la route directe, le plus court chemin légal de 3 577 milles. Presque toutes les routes passent au nord de la route directe et toutes passent au nord des Açores. Aucun scénario ne conseillait cette année la route sud classique, qui descend chercher les alizés au large des Canaries. La latitude de passage ne dit presque rien de la durée, qui va de 10,6 à 14 jours selon le scénario. Passer plus ou moins au nord n'est ni bon ni mauvais en soi, tout dépend de la météo qui se réalise._
 
 Chacune de ces routes est la meilleure dans son propre monde. Pour savoir ce qu'elle vaut ailleurs, je fais naviguer chaque route $$ r_i $$ dans chaque scénario $$ s_j $$. J'obtiens une matrice de temps de parcours $$ T_{ij} $$, le temps de la route $$ i $$ quand la météo est celle du scénario $$ j $$. Par construction, la meilleure valeur de chaque colonne se trouve sur la diagonale, puisque la route $$ r_j $$ a été calculée pour le scénario $$ j $$.
 
