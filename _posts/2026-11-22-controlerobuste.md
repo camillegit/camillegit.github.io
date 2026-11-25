@@ -27,7 +27,7 @@ On les trace en coordonnées polaires, d'où leur nom. Pour chaque force de vent
 
 Les polaires des équipes restent secrètes. J'ai utilisé les seules polaires publiques, celles des certificats de jauge ORC, calculées par un VPP. Pour les Class40, j'en ai tiré deux versions, la médiane de 31 certificats de la classe et celle d'un scow récent, un Mach 2 de 2022. Pour les IMOCA, j'ai pris le certificat d'un plan Verdier de 2021. Ces polaires sont prudentes. Comparés aux positions réelles, les bateaux allaient 1,3 à 1,5 fois plus vite que ce que prévoyait mon routeur, et l'écart est le plus fort pour les IMOCA, dont les foils sont mal pris en compte par la jauge.
 
-![Polaire d'un Class40 Mach 2 pour quatre forces de vent](/assets/img/posts/controlerobuste/polaire_class40_v2.png)
+![Polaire d'un Class40 Mach 2 pour quatre forces de vent](/assets/img/posts/controlerobuste/polaire_class40_v3.png)
 _Polaire du Class40 Mach 2 (certificat ORC). Le point marque la vitesse maximale pour chaque force de vent. Plus le vent forcit, plus l'angle le plus rapide s'écarte vers le largue._
 
 ### Les fichiers météo
