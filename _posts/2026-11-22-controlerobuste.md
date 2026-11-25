@@ -11,7 +11,7 @@ J'aime beaucoup la voile, et ce mois de novembre se courait la Route du Rhum, la
 
 J'ai voulu comprendre ce que fait ce logiciel, alors j'en ai écrit un petit. Une question plus intéressante est vite apparue. Un routeur sait calculer la route la plus rapide pour une météo donnée. Or la météo de demain reste incertaine, et les centres de prévision fournissent plusieurs scénarios. Choisir une route devient alors un problème de décision sous incertitude, celui que traite le **contrôle robuste**. Je pars ici des données d'entrée d'un routeur, puis je présente la méthode des isochrones et ses liens avec la programmation dynamique et l'optimisation linéaire, avant d'arriver au contrôle robuste et à la notion de regret.
 
-Le projet est écrit en Python. Un Raspberry Pi a tourné seul pendant toute la course. Toutes les six heures, à chaque nouveau run du modèle américain, il archivait les positions de la flotte relevées sur la cartographie officielle et les fichiers météo, routait les bateaux depuis leur position réelle, puis recalculait un faisceau de routes d'ensemble et une décision robuste. Tout est archivé avec les données d'entrée, ce qui permet de rejouer chaque calcul après coup. Les figures de cet article sortent de ces archives.
+Le projet est écrit en Python. Un Raspberry Pi a tourné seul pendant toute la course. Toutes les six heures, à chaque nouveau run du modèle américain, il archivait les positions de la flotte relevées sur la cartographie officielle et les fichiers météo, routait les bateaux depuis leur position réelle, puis recalculait un faisceau de routes d'ensemble et une décision robuste. Tout est archivé avec les données d'entrée, ce qui permet de rejouer chaque calcul après coup. Je me suis concentré sur les Class40, la classe la plus nombreuse avec 49 bateaux au départ, et j'ai fait courir parmi eux un Class40 virtuel qui suivait les conseils de mon routeur. Les figures de cet article sortent de ces archives.
 
 ## Les données d'entrée
 
@@ -25,7 +25,7 @@ $$ V = V(\text{TWS}, \text{TWA}) $$
 
 On les trace en coordonnées polaires, d'où leur nom. Pour chaque force de vent on obtient une courbe, et la distance au centre donne la vitesse dans chaque direction. On y lit ce que tout marin sent à la barre. Face au vent le bateau s'arrête, il atteint sa vitesse maximale au travers ou au largue, et au vent arrière il va souvent plus vite en tirant des bords qu'en filant droit. Les architectes calculent les polaires avec des logiciels de prédiction de vitesse (VPP pour *velocity prediction program*), puis les équipes les corrigent avec les mesures faites en navigation. Le routeur lit ce tableau et interpole entre les valeurs.
 
-Les polaires des équipes restent secrètes. J'ai utilisé les seules polaires publiques, celles des certificats de jauge ORC, calculées par un VPP. Pour les Class40, j'en ai tiré deux versions, la médiane de 31 certificats de la classe et celle d'un scow récent, un Mach 2 de 2022. Pour les IMOCA, j'ai pris le certificat d'un plan Verdier de 2021. Ces polaires sont prudentes. Comparés aux positions réelles, les bateaux allaient 1,3 à 1,5 fois plus vite que ce que prévoyait mon routeur, et l'écart est le plus fort pour les IMOCA, dont les foils sont mal pris en compte par la jauge.
+Les polaires des équipes restent secrètes. J'ai utilisé les seules polaires publiques, celles des certificats de jauge ORC, calculées par un VPP. Pour les Class40, j'en ai tiré deux versions, la médiane de 31 certificats de la classe et celle d'un scow récent, un Mach 2 de 2022, que j'ai utilisée dans la suite. Ces polaires sont plutôt prudentes. À chaque cycle, j'ai comparé la distance parcourue par les vrais Class40 dans les 24 heures suivantes à celle que prévoyait mon routeur. En médiane sur la course, ils allaient 6 % plus vite que prévu, et la moitié des cycles se situent entre 1 % moins vite et 19 % plus vite. Une partie de l'écart vient de la polaire, une autre du vent, que le modèle ne prévoit jamais parfaitement.
 
 ![Polaire d'un Class40 Mach 2 pour quatre forces de vent](/assets/img/posts/controlerobuste/polaire_class40_v3.png)
 _Polaire du Class40 Mach 2 (certificat ORC). Le point marque la vitesse maximale pour chaque force de vent. Plus le vent forcit, plus l'angle le plus rapide s'écarte vers le largue._
@@ -41,12 +41,12 @@ Les centres de prévision ont trouvé une parade, la **prévision d'ensemble**. 
 J'ai utilisé l'ensemble GEFS, gratuit et publié toutes les six heures, sur une grille de 0,5° couvrant l'Atlantique de 5° à 55° N. Les échéances sont espacées de 6 h jusqu'à dix jours, puis de 12 h jusqu'à seize jours. La route déterministe utilise GFS à 0,25°, et le modèle européen IFS sert de second avis.
 
 ![Panache des 31 membres GEFS](/assets/img/posts/controlerobuste/panache_gefs.png)
-_Le vent prévu par les 31 membres en un point situé au milieu de l'Atlantique nord, sur le chemin des IMOCA, pour le run du matin du départ. Les membres restent groupés pendant deux jours. L'écart type passe de 2 nœuds à J+1 à 4 nœuds à J+3, puis à près de 9 nœuds à J+7, autant dire qu'à cette échéance la prévision ne dit plus grand-chose en ce point._
+_Le vent prévu par les 31 membres en un point situé au milieu de l'Atlantique nord, sur le chemin de la flotte, pour le run du matin du départ. Les membres restent groupés pendant deux jours. L'écart type passe de 2 nœuds à J+1 à 4 nœuds à J+3, puis à près de 9 nœuds à J+7, autant dire qu'à cette échéance la prévision ne dit plus grand-chose en ce point._
 
 Une carte rend la divergence plus concrète. Voici trois membres du même run, quatre jours après le départ.
 
-![Trois scénarios de vent à J+4](/assets/img/posts/controlerobuste/trois_scenarios.png)
-_Le vent prévu le 5 novembre à 12 h UTC par trois membres GEFS partis du même état initial. La couleur donne la force du vent, les flèches le sens dans lequel il souffle, et les lignes fines les isobares. En orange, la route IMOCA optimale dans chaque scénario, en trait plein jusqu'à cette date. Dans le membre de contrôle, une dépression creusée vers 40° N 30° O se trouve sur le chemin de la flotte. Dans le membre 17, la dépression est moins creuse et plus au sud, et le bateau a déjà atteint 46° N par le nord. Dans le membre 14, une dépression plus creuse se trouve au nord, vers 50° N, et le bateau passe plus au sud. Trois scénarios plausibles, et jusqu'à 300 milles d'écart entre les positions du bateau au bout de quatre jours._
+![Trois scénarios de vent à J+4](/assets/img/posts/controlerobuste/trois_scenarios_v2.png)
+_Le vent prévu le 5 novembre à 16 h UTC par trois membres GEFS partis du même état initial. La couleur donne la force du vent, les flèches le sens dans lequel il souffle, et les lignes fines les isobares. En orange, la route optimale du Class40 dans chaque scénario, en trait plein jusqu'à cette date. J'ai retenu le membre de contrôle et les deux scénarios qui reviennent plus loin dans l'analyse de la décision. Dans le contrôle, le bateau se trouve vers 40° N 28° O, au contact d'une dépression creusée sur le chemin de la flotte. Dans le membre 25, il a déjà atteint 31° O, plus au nord, et arrive en 14,5 jours. Dans le membre 04, il reste bloqué plus à l'est dans des vents faibles et met 17,5 jours. Trois scénarios plausibles, trois jours d'écart à l'arrivée._
 
 ## Calculer la meilleure route pour une météo donnée
 
@@ -60,10 +60,10 @@ $$ p_{k+1} = p_k + \Delta t \cdot V\big(\text{TWS}(p_k, t_k), \text{TWA}(\theta,
 
 Ici $$ p_k $$ est la position au pas $$ k $$, $$ \theta $$ le cap choisi et $$ \vec{e}_\theta $$ un vecteur de longueur un qui pointe dans la direction du cap. On obtient un nuage de points atteignables. On garde seulement son enveloppe extérieure, la courbe des points les plus éloignés dans chaque direction. Cette courbe est l'isochrone, littéralement l'ensemble des points atteignables en un même temps. On recommence depuis chacun de ses points, et les isochrones s'étendent comme des ronds dans l'eau déformés par le vent. Dès qu'une isochrone touche l'arrivée, on remonte la chaîne des points qui y mènent, et cette chaîne est la route optimale.
 
-Dans mon implémentation, le pas de temps est d'une heure au large et d'un quart d'heure à l'approche de la Guadeloupe. Je teste un cap tous les 5°, et l'élagage garde le point le plus éloigné dans chaque secteur de 1° vu du départ. Un masque des côtes écarte les déplacements qui toucheraient la terre, et chaque virement ou empannage coûte un temps perdu tiré des durées de manœuvre observées dans chaque classe. Pour un IMOCA, la traversée entière, environ 3 600 milles et 257 isochrones, se calcule en une dizaine de secondes sur un portable.
+Dans mon implémentation, le pas de temps est d'une heure au large et d'un quart d'heure à l'approche de la Guadeloupe. Je teste un cap tous les 5°, et l'élagage garde le point le plus éloigné dans chaque secteur de 1° vu du départ. Un masque des côtes écarte les déplacements qui toucheraient la terre, et chaque virement ou empannage coûte un temps perdu tiré des durées de manœuvre observées dans chaque classe. Pour un Class40, la traversée entière, environ 3 600 milles et près de 350 isochrones, se calcule en une quinzaine de secondes sur un portable.
 
-![Isochrones et route optimale d'un IMOCA](/assets/img/posts/controlerobuste/isochrones.png)
-_Une isochrone par jour pour un IMOCA, avec le vent GFS du matin du départ. Les fronts avancent vite dans le flux de nord-est du golfe de Gascogne, puis s'étirent vers le sud-ouest dans les alizés. La route optimale, en orange, est remontée depuis l'arrivée._
+![Isochrones et route optimale d'un Class40](/assets/img/posts/controlerobuste/isochrones_v2.png)
+_Une isochrone par jour pour un Class40, avec le vent GFS du matin du départ. Les fronts avancent vite dans le flux de nord-est du golfe de Gascogne, puis s'étirent vers le sud-ouest dans les alizés. La route optimale, en orange, est remontée depuis l'arrivée._
 
 ### Le lien avec la programmation dynamique
 
@@ -99,16 +99,18 @@ Cette dualité a une histoire qui nous servira plus loin. En octobre 1947, Georg
 
 Revenons à l'incertitude. Avec un ensemble de 31 membres, je lance le calcul des isochrones 31 fois, une fois par scénario. J'obtiens 31 routes optimales $$ r_1, \dots, r_{31} $$. Quand on les superpose sur une carte, on obtient un plat de spaghettis. Certaines passent au nord, d'autres au sud, certaines se ressemblent beaucoup.
 
-![Les 31 routes d'ensemble](/assets/img/posts/controlerobuste/spaghettis_gefs.png)
-_Les 31 routes optimales d'un IMOCA au départ, une par membre GEFS. Chaque route est colorée selon la latitude à laquelle elle franchit le méridien 30° O, du plus clair au sud au plus foncé au nord. Les routes restent groupées pendant deux jours, puis s'ouvrent en éventail. Au passage de 30° O, elles s'étalent de 40° à 48° N, sans former deux groupes nets. En pointillé, la route directe, le plus court chemin légal de 3 577 milles. Presque toutes les routes passent au nord de la route directe et toutes passent au nord des Açores. Aucun scénario ne conseillait cette année la route sud classique, qui descend chercher les alizés au large des Canaries. La latitude de passage ne dit presque rien de la durée, qui va de 10,6 à 14 jours selon le scénario. Passer plus ou moins au nord n'est ni bon ni mauvais en soi, tout dépend de la météo qui se réalise._
+![Les 31 routes d'ensemble](/assets/img/posts/controlerobuste/spaghettis_gefs_v2.png)
+_Les 31 routes optimales du Class40 virtuel, une par membre GEFS, calculées le 1er novembre depuis sa position de 16 h UTC au large de Bréhat. Chaque route est colorée selon la latitude à laquelle elle franchit le méridien 30° O, du plus clair au sud au plus foncé au nord. Les routes restent groupées pendant deux jours et demi, puis s'ouvrent en éventail. Au passage de 30° O, elles s'étalent de 38° à 48° N, sans former deux groupes nets. En pointillé, la route directe, le plus court chemin légal de 3 577 milles. La plupart des routes passent au nord de la route directe et des Açores. Trois seulement, dont celle du membre de contrôle, longent les Açores par le sud, et aucune ne descend chercher les alizés au large des Canaries par la route sud classique. Selon le scénario, la traversée prend de 13,1 à 17,7 jours, et la latitude de passage ne dit pas grand-chose de la durée._
 
 Chacune de ces routes est la meilleure dans son propre monde. Pour savoir ce qu'elle vaut ailleurs, je fais naviguer chaque route $$ r_i $$ dans chaque scénario $$ s_j $$. J'obtiens une matrice de temps de parcours $$ T_{ij} $$, le temps de la route $$ i $$ quand la météo est celle du scénario $$ j $$. Par construction, la meilleure valeur de chaque colonne se trouve sur la diagonale, puisque la route $$ r_j $$ a été calculée pour le scénario $$ j $$.
 
 Il faut préciser ce que veut dire « faire naviguer une route dans un autre scénario ». On peut suivre la trace géographique, suivre la suite de caps, ou suivre la route en s'autorisant des corrections. Ce choix change la matrice.
 
-Dans le projet, j'ai choisi une quatrième voie, qui ressemble davantage à ce que fait un marin. Je ne m'engage pas sur une route entière, seulement sur le prochain choix structurant, représenté par une **porte**. C'est un point de passage placé à l'échéance où le faisceau se sépare, ici trois jours après le départ. Je place cinq portes qui couvrent la largeur du faisceau à cette échéance, du sud au nord. Pour chaque porte $$ g $$ et chaque scénario $$ m $$, le temps total est
+Dans le projet, j'ai choisi une quatrième voie, qui ressemble davantage à ce que fait un marin. Je ne m'engage pas sur une route entière, seulement sur le prochain choix structurant. Un skipper ne décide pas au départ de chaque bord jusqu'à la Guadeloupe. Il décide d'abord de quel côté d'une dépression ou d'un anticyclone il va passer, et il verra la suite plus tard. Je représente ce choix par une **porte**.
 
-$$ T_{gm} = 	au(	ext{départ} 	o g \mid m) + 	au(g 	o 	ext{arrivée} \mid m) $$
+Une porte est un point de passage, une latitude et une longitude, que le bateau s'impose d'atteindre à une échéance donnée. Il ne faut pas la confondre avec les portes imposées par un règlement de course, comme les portes des glaces du Vendée Globe. Ici, c'est le skipper qui se l'impose à lui-même. En pratique, les navigateurs font la même chose avec un waypoint forcé dans leur logiciel de routage. Ils le placent à la main, d'un côté puis de l'autre d'une dépression, et comparent les temps d'arrivée. Je place mes portes automatiquement, à partir du faisceau des routes d'ensemble. Je choisis d'abord l'échéance où ce faisceau commence à s'ouvrir, ici trois jours après le départ. À cette échéance, je relève la position de chacune des 31 routes, et je place cinq portes sur ces positions, du sud au nord. Je calcule les 10ᵉ, 30ᵉ, 50ᵉ, 70ᵉ et 90ᵉ centiles de leurs latitudes, et chaque porte est la position de la route la plus proche de l'un de ces centiles. Chaque porte est donc un point qu'au moins un scénario atteint vraiment à cette échéance. Les portes couvrent ainsi la largeur du faisceau, des options les plus au sud aux plus au nord. Choisir une porte revient donc à choisir une option, plus ou moins au nord, sans encore choisir la route complète. Pour chaque porte $$ g $$ et chaque scénario $$ m $$, le temps total est
+
+$$ T_{gm} = \tau(\text{départ} \to g \mid m) + \tau(g \to \text{arrivée} \mid m) $$
 
 La seconde partie est le **recours**. Une fois la porte passée, je suppose qu'on routera au mieux dans la météo qui se réalisera. L'hypothèse est optimiste, puisqu'elle suppose qu'on saura alors quel scénario est le bon, mais c'est le cadre classique de la programmation stochastique à deux étapes. La matrice compte 5 lignes et 31 colonnes, et la question devient le choix d'une ligne.
 
@@ -206,45 +208,86 @@ La pratique du skipper correspond à la **commande prédictive**, ou commande à
 
 ### La décision du départ
 
-Reprenons le matin du départ, le 1er novembre, avec le run GEFS de 6 h et la polaire IMOCA. Les cinq portes sont placées trois jours après le départ, au milieu de l'Atlantique nord, entre 42,8° et 46,9° N. Voici ce que vaut chacune d'elles sur les 31 scénarios, en heures de course. La dernière colonne donne le temps dans le seul scénario du membre de contrôle, celui que regarderait un routeur qui ne connaît qu'une prévision.
+Reprenons le jour du départ, le 1er novembre. Mon Class40 virtuel est parti à 13 h 02 avec la flotte, et à 16 h UTC il se trouve au large de Bréhat. Le routeur dispose du run GEFS de 6 h. Le choix se fait entre les cinq portes définies plus haut, cinq points de passage à atteindre trois jours plus tard, le 4 novembre à 16 h, notés P1 à P5 du sud au nord. Elles se trouvent à l'ouest de la Galice, entre 43,3° et 46,6° N, et la carte des positions réelles, plus bas, les montre. Voici ce que vaut chacune d'elles sur les 31 scénarios, en heures de course depuis la position de 16 h. La dernière colonne donne le temps dans le seul scénario du membre de contrôle, celui que regarderait un routeur qui ne connaît qu'une prévision.
 
 | Porte | Position | Moyenne (Laplace) | Pire cas (Wald) | Hurwicz ($$ \alpha = 0{,}5 $$) | Regret maximal (Savage) | Scénario de contrôle |
 |---|---|---|---|---|---|---|
-| P1 | 42,8° N 25,8° O | 294,8 | 338,8 | 297,4 | 43,7 | **300,0** |
-| P2 | 43,5° N 28,2° O | 291,5 | 323,8 | 290,1 | 30,6 | **300,0** |
-| P3 | 44,4° N 25,0° O | 292,0 | 323,4 | 289,7 | 40,1 | 306,8 |
-| P4 | 45,0° N 28,6° O | **291,1** | **320,0** | **288,3** | **17,7** | 304,3 |
-| P5 | 46,9° N 27,0° O | 291,3 | 332,9 | 295,2 | 19,1 | 304,5 |
+| P1 | 43,3° N 23,0° O | 364,0 | 419,6 | 365,0 | 18,4 | **370,0** |
+| P2 | 44,2° N 24,2° O | 363,0 | **411,8** | **361,2** | 24,5 | 392,8 |
+| P3 | 45,0° N 23,3° O | **362,2** | 416,9 | 364,2 | 21,3 | 379,6 |
+| P4 | 45,6° N 23,1° O | **362,2** | 413,4 | 362,9 | **16,2** | 381,0 |
+| P5 | 46,6° N 23,1° O | 362,5 | 414,2 | 364,1 | 20,6 | 378,6 |
 
-Sur ce cas réel, les quatre règles tombent d'accord et choisissent P4, la porte la plus à l'ouest du côté nord. La route déterministe, celle qu'on obtient en ne regardant que le scénario du membre de contrôle, passe par P1 (à égalité avec P2), plus au sud et plus à l'est. Son regret maximal atteint 44 heures, contre 18 heures pour P4. Les moyennes, elles, sont très proches, entre 291 et 295 heures. L'écart entre les portes se joue presque entièrement dans quelques scénarios défavorables, ce que la moyenne écrase et ce que le regret fait ressortir.
+Cette fois, les règles ne s'accordent pas. Le scénario de contrôle désigne P1, la porte la plus au sud. Laplace hésite entre P3 et P4, à égalité à quelques secondes près. Wald et Hurwicz choisissent P2, et Savage choisit P4. On retrouve la situation du petit exemple présenté plus haut, avec trois routes (nord, directe et sud) et quatre scénarios, où chaque règle choisissait une route différente.
 
-![Matrice des regrets au départ](/assets/img/posts/controlerobuste/regrets_depart_v2.png)
-_Le regret de chaque porte dans chaque scénario. La plupart des cases sont presque blanches, toutes les portes se valent dans la majorité des scénarios. Chaque scénario porte le numéro du membre GEFS qui le produit, 00 étant le contrôle. Le scénario 17 pénalise lourdement les portes du sud et de l'est, le scénario 14 pénalise la porte la plus au nord. P4 est la seule porte qui ne perd jamais plus de 18 heures._
+Les écarts sont pourtant faibles. Les moyennes tiennent en deux heures sur quinze jours de course, et les regrets maximaux vont de 16 à 25 heures. Le scénario de contrôle, lui, fait croire à des écarts bien plus grands, puisqu'il donne 23 heures d'avance à P1 sur P2. C'est le piège de la prévision unique. Elle exagère des différences qui disparaissent quand on regarde l'ensemble. La **valeur de l'information parfaite** confirme cet ordre de grandeur. Si l'on savait à l'avance quel scénario va se réaliser, on gagnerait en moyenne 3,1 heures sur le meilleur choix fait sans le savoir.
 
-![Distribution des durées pour deux choix de porte](/assets/img/posts/controlerobuste/distribution_depart_v2.png)
-_La durée de course dans chacun des 31 scénarios, pour la porte du déterministe et pour la porte du regret minimax. Les médianes diffèrent de quelques heures. La différence se voit surtout à droite, où la porte du déterministe garde une queue de scénarios lents._
+![Matrice des regrets au départ](/assets/img/posts/controlerobuste/regrets_depart_v3.png)
+_Le regret de chaque porte dans chaque scénario. Chaque scénario porte le numéro du membre GEFS qui le produit, 00 étant le contrôle. La plupart des cases sont presque blanches, toutes les portes se valent dans la majorité des scénarios. La porte du contrôle, P1, perd plus de 10 heures dans six scénarios, et jusqu'à 18 heures dans le scénario 25. La porte de Savage, P4, ne perd plus de 10 heures que dans deux scénarios, et au plus 16 heures dans le scénario 04._
 
-L'accord des quatre règles n'a rien d'une loi. Dans l'exemple jouet plus haut, elles choisissaient trois routes différentes. Ici, P4 est à la fois bonne en moyenne et jamais très mauvaise, et toutes les règles la retiennent. La **valeur de l'information parfaite** donne un autre ordre de grandeur. Si l'on savait à l'avance quel scénario va se réaliser, on gagnerait en moyenne 3,4 heures sur le meilleur choix fait sans le savoir. C'est peu sur douze jours de course, et cela dit que la décision du départ comptait moins que ce que laissait croire la dispersion des routes.
+![Distribution des durées pour deux choix de porte](/assets/img/posts/controlerobuste/distribution_depart_v3.png)
+_La durée de course dans chacun des 31 scénarios, pour la porte du scénario de contrôle et pour la porte du regret minimax. Les deux nuages se ressemblent beaucoup. Le choix de la porte pèse peu face à l'écart entre les scénarios, qui va de 13 à 18 jours._
 
 ### Cycle après cycle
 
-Le projet a fait la même analyse toutes les six heures pour un Class40 virtuel qui suivait la route conseillée. Sur les 32 cycles où il restait plus de cinq jours de course, entre le 1er et le 9 novembre, la porte du déterministe n'a jamais été celle que choisissaient à la fois Laplace, Wald et Savage. Le regret minimax a choisi la même porte que la moyenne dans la moitié des cycles, et la même que le déterministe dans 7 cycles seulement. Le regret maximal médian de la porte déterministe est de 19 heures, contre 12 heures pour la porte de Savage.
+Le projet a refait cette analyse toutes les six heures pour le Class40 virtuel. Sur les 32 cycles où il restait plus de cinq jours de course, entre le 1er et le 9 novembre, la porte du scénario de contrôle n'a jamais été celle que choisissaient à la fois Laplace, Wald et Savage. Le regret minimax a choisi la même porte que la moyenne dans la moitié des cycles, et la même que le scénario de contrôle dans 7 cycles seulement. Le regret maximal médian de la porte du contrôle est de 19 heures, contre 12 heures pour la porte de Savage.
 
 ![Regret maximal au fil de la course](/assets/img/posts/controlerobuste/regret_course_v2.png)
-_Le regret maximal de la porte choisie, à chaque cycle, pour le déterministe et pour le regret minimax. Les deux courbes se rejoignent à mesure que l'arrivée approche et que les scénarios se ressemblent._
+_Le regret maximal de la porte choisie, à chaque cycle, pour le scénario de contrôle et pour le regret minimax. Les deux courbes se rejoignent à mesure que l'arrivée approche et que les scénarios se ressemblent._
 
-Il faut lire ce graphique avec prudence. La règle de Savage minimise par construction le regret maximal, et elle ne peut donc qu'être en dessous de l'autre courbe. Le graphique montre que le déterministe s'expose parfois à des regrets de 50 à 60 heures, surtout dans les trois premiers jours, et que la décision robuste ramène ce risque autour de 15 heures. Il ne prouve pas que la route robuste aurait été plus rapide dans la météo qui s'est réalisée.
+Il faut lire ce graphique avec prudence. La règle de Savage minimise par construction le regret maximal, et elle ne peut donc qu'être en dessous de l'autre courbe. Le graphique montre que la prévision unique s'expose parfois à des regrets de 50 à 60 heures, surtout dans les trois premiers jours, et que la décision robuste ramène ce risque autour de 15 heures. Il ne dit pas si la route robuste aurait été plus rapide dans la météo qui s'est réalisée. Ce test vient plus bas, une fois la course finie.
 
 ### Et les vrais skippers ?
 
-Trois jours après le départ, les IMOCA de tête étaient répartis sur toute la largeur des portes, et au-delà.
+Le 4 novembre à 16 h, à l'échéance des portes, les futurs premiers étaient groupés.
 
-![Positions réelles des IMOCA à +72 h](/assets/img/posts/controlerobuste/realite_portes.png)
-_Les positions relevées sur la cartographie officielle le 4 novembre vers 12 h UTC, et les cinq portes calculées au départ. Les dix premiers IMOCA sont en orange._
+![Positions réelles des Class40 à l'échéance des portes](/assets/img/posts/controlerobuste/realite_portes_v2.png)
+_Les positions des Class40 relevées sur la cartographie officielle le 4 novembre à 16 h UTC, et les cinq portes calculées le jour du départ. En orange, les sept premiers à l'arrivée, le reste de la flotte en gris._
 
-Malizia, deuxième à l'arrivée, est passé entre P2 et P4, tout près de la porte robuste. Deux bateaux du top dix étaient plus au nord-ouest, entre P4 et P5. Le futur vainqueur, MACSF, était seul au sud-ouest, à plus de 200 milles de la porte la plus proche. À la même échéance, aucune des 31 routes de mon routeur n'était aussi loin à l'ouest. Une partie de l'écart vient de la vitesse, puisque les vrais bateaux allaient plus vite que mes polaires et avaient donc parcouru plus de chemin en trois jours. Le reste est un vrai choix d'option. Son skipper avait sans doute de meilleures polaires, d'autres modèles météo et surtout une lecture du ciel que mon routeur n'a pas. MACSF a coupé la ligne à Pointe-à-Pitre le 12 novembre au matin, après un peu moins de onze jours de course, quand ma route déterministe en prévoyait 11,2 et la médiane de l'ensemble 12,3. L'écart avec la médiane de l'ensemble vient en bonne partie des polaires ORC trop prudentes.
+Six des sept premiers à l'arrivée naviguaient ensemble vers 45° N, à la latitude des portes P3 et P4, mais deux à quatre degrés plus à l'ouest. Ils allaient plus vite que mes polaires ORC et avaient donc parcouru plus de chemin. Le dernier, Solano, quatrième à l'arrivée, avait choisi une ligne plus au sud, vers 43° N, à la latitude de P1. Plusieurs bateaux du milieu de flotte, comme Crédit Mutuel, étaient plus au nord, vers 47° N.
+
+Le vrai choix stratégique est venu après, entre 25° et 35° O.
+
+![Trajectoires réelles des Class40](/assets/img/posts/controlerobuste/strategie_class40.png)
+_Les trajectoires des Class40 reconstruites à partir des positions relevées toutes les demi-heures. En bleu, les sept premiers à l'arrivée, en violet les six suivants, le reste de la flotte en gris. En pointillé, la route directe._
+
+Les sept premiers ont plongé vers le sud-ouest dès 33° O, en passant sous la route directe. Au passage de 35° O, ils étaient tous entre 35° et 39° N. Le groupe suivant, de VSF Sports, Maccaferri Futura, Patapain, Crédit Mutuel et deux autres, a continué vers l'ouest au nord, entre 42° et 45° N, avant de descendre beaucoup plus tard vers les alizés. Les sept premiers sont arrivés entre le 15 novembre en début d'après-midi et le 16 au matin, menés par Amarris et Sogestran - Seafrigo, à moins d'une demi-heure d'intervalle, après un peu plus de 14 jours de course. Le groupe du nord est arrivé le 17 novembre, avec près d'un jour et demi de retard sur la tête. Une même flotte, partie groupée, s'est donc séparée en deux options nettes. Cette fois, on voit un vrai groupe dans les données.
+
+Il faut rester prudent sur la cause. Les bateaux de tête sont aussi souvent les plus récents et les mieux menés, et ils ont rencontré une météo différente parce qu'ils étaient devant. L'option du sud n'explique pas à elle seule leur avance. Mon routeur avait envisagé des options de ce type. Le 1er novembre, trois des 31 routes d'ensemble, dont celle du scénario de contrôle, passaient sous la route directe dès 25° O. Mais la décision du départ portait sur les trois premiers jours, avant cette séparation, et elle ne pouvait pas trancher entre les deux options. C'est tout l'intérêt du recours, la décision suivante se prend au cycle suivant, avec un fichier météo plus récent. La route déterministe GFS du départ annonçait d'ailleurs 14,5 jours de course, assez proche des 14,1 jours du vainqueur.
 
 Cette comparaison rappelle la limite de l'exercice. Le regret ne protège qu'à l'intérieur des scénarios qu'on a envisagés. Si la bonne option est absente du faisceau, aucune règle de décision ne la trouvera.
+
+### Confrontation avec le réel
+
+Une fois la course finie, on peut faire ce que personne ne pouvait faire pendant la course : rejouer les routes dans la météo qui s'est réellement produite. J'ai reconstitué cette météo vécue en mettant bout à bout les analyses GFS, c'est-à-dire l'état initial de chaque run et sa prévision à 3 heures, soit un champ de vent toutes les trois heures du 1er au 20 novembre. Ce n'est pas le vent exact sur l'eau, que personne ne mesure partout, mais c'est la meilleure estimation disponible, et c'est la même référence pour toutes les routes comparées.
+
+Dans cette météo, la route optimale de mon Class40 virtuel, de la ligne de départ à l'arrivée, prend 15,2 jours. Elle reste vers 43° N jusqu'à 30° O, puis plonge vers le sud-ouest. Elle passe à 42° N au méridien 35° O, entre les sept premiers et le groupe du nord, et à 37° N au méridien 40° O. Amarris a mis 14,1 jours, un jour de moins que cet optimum, parce que les vrais bateaux vont plus vite que ma polaire ORC. L'optimum a posteriori n'est donc pas un temps à battre pour les skippers. C'est une référence pour juger les décisions de mon propre routeur, avec la même polaire.
+
+Pour chaque décision du Class40 virtuel, j'ai recalculé dans la météo vécue la route qui passe par chacune des cinq portes. On connaît alors la meilleure porte a posteriori, et le **regret réalisé** de chaque choix, c'est-à-dire le temps perdu par rapport à cette meilleure porte. Voici deux exemples, l'un défavorable au regret minimax, l'autre favorable.
+
+![Deux décisions rejouées dans la météo vécue](/assets/img/posts/controlerobuste/bilan_exemples.png)
+_Deux décisions du Class40 virtuel, rejouées dans la météo vécue. En pointillé noir, la route optimale a posteriori depuis la ligne de départ. En orange, la route qui passe par la porte du scénario de contrôle, en bleu celle qui passe par la porte du regret minimax, toutes deux calculées dans la météo vécue depuis la position du bateau au moment de la décision. En gris, la trajectoire réelle d'Amarris. La légende donne le regret réalisé de chaque choix._
+
+Le premier exemple est la décision du départ, détaillée plus haut. Dans la météo vécue, la meilleure porte était P2, celle que choisissaient Wald et Hurwicz. La porte du contrôle, P1, perd 10,8 heures, et celle de Savage, P4, en perd 15,7. Le regret minimax se protégeait contre les pires scénarios de l'ensemble, mais la météo réelle n'en faisait pas partie, et la porte la plus au nord s'est révélée la plus lente. Ici, la prudence a coûté cher.
+
+Le second exemple est la décision du 2 novembre à 6 h UTC, quand le bateau virtuel se trouvait au nord-ouest d'Ouessant. Le scénario de contrôle et la moyenne désignaient P3, Savage choisissait P2. Dans la météo vécue, P2 était la meilleure porte et P3 perdait 14,5 heures. Cette fois, le regret minimax a vu juste là où la prévision unique se trompait.
+
+Deux exemples ne font pas une conclusion. Sur l'ensemble des 32 décisions, voici le regret réalisé de chaque règle, en heures.
+
+| Règle | Regret médian | Regret moyen | Regret maximal | Meilleure porte trouvée |
+|---|---|---|---|---|
+| Scénario de contrôle seul | 3,9 | 4,5 | **15,1** | 3 fois sur 32 |
+| Moyenne (Laplace) | 1,8 | **3,4** | 16,1 | **8 fois** |
+| Pire cas (Wald) | **1,5** | 4,2 | 17,5 | **8 fois** |
+| Hurwicz ($$ \alpha = 0{,}5 $$) | 1,7 | **3,4** | 17,5 | 5 fois |
+| Regret maximal (Savage) | 2,5 | 4,0 | 17,0 | 7 fois |
+
+![Regret réalisé au fil de la course](/assets/img/posts/controlerobuste/regret_reel_course.png)
+_Le regret réalisé, dans la météo vécue, de la porte du scénario de contrôle et de celle du regret minimax, pour chaque run GEFS où il restait plus de cinq jours de course. Les grands écarts sont concentrés dans les trois premiers jours, quand les portes sont encore loin de la météo connue._
+
+Trois leçons s'en dégagent. D'abord, utiliser l'ensemble compte plus que le choix de la règle. Les quatre règles qui regardent les 31 scénarios font mieux que le scénario de contrôle seul, en médiane comme en moyenne. Le contrôle n'a trouvé la meilleure porte que 3 fois sur 32, moins souvent qu'un tirage au hasard, qui la trouverait environ une fois sur cinq. Ensuite, le regret minimax ne gagne pas à tous les coups. Il bat le contrôle dans 16 décisions, fait jeu égal dans 7 et perd dans 9. Il ne fait pas mieux que la simple moyenne, et son pire regret réalisé, 17 heures, n'est pas meilleur que celui du contrôle. C'est logique, puisque Savage ne garantit un regret borné qu'à l'intérieur des scénarios de l'ensemble, et la météo réelle n'est jamais exactement l'un d'eux. Enfin, les enjeux restent modestes. Un regret moyen de 3 à 5 heures sur quinze jours de course, c'est l'ordre de grandeur de la valeur de l'information parfaite calculée au départ, 3,1 heures.
+
+Il faut garder les limites en tête. Les 32 décisions sont très corrélées entre elles, et une seule course ne fait pas une statistique. Le routeur lui-même n'est pas exact, et des écarts de moins d'une heure entre deux routes relèvent du bruit de calcul. Et la météo vécue reste une reconstruction par le modèle GFS. Le bilan est donc encourageant pour l'approche par ensemble, plus nuancé pour le regret minimax en particulier, qui reste avant tout une assurance contre les scénarios extrêmes que cette course n'a pas produits.
 
 ## Conclusion
 
